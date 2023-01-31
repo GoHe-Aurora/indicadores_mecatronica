@@ -164,6 +164,7 @@
           </li>
         @endif
         @if(Auth()->user()->idtu_tipos_usuarios != 1)
+
           <!--li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-edit"></i>
@@ -239,6 +240,22 @@
             </ul>
           </li-->
           @endif
+            <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+             <i class="fas fa-list"></i>
+              <p>Listas</p>
+              <i class="fas fa-angle-left right"></i>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                      <a href="{{ url('/alumnos')}}" class="nav-link">
+                      <i class="fas fa-users"></i>
+                      <p>Alumnos</p>
+                      </a>
+                    </li>
+            </ul>
+          </li>
+
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="fas fa-chart-pie"></i>
@@ -275,13 +292,12 @@
                       </a>
                     </li-->
                   {{--@endif--}}
-                  @if(auth()->user()->idtu_tipos_usuarios != 4 )
-                    <li class="nav-item">
-                      <a href="{{ url('/dashboard/'.auth()->user()->idu)}}/actividades-creadas" class="nav-link">
+                    <!--li class="nav-item">
+                      <a href="{{ url('/graficas')}}" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
-                      <p>Prueba</p>
+                      <p>Graficas</p>
                       </a>
-                    </li>
+                    </li-->
                     <!--li class="nav-item">
                       <a href="{{ url('/dashboard/'.auth()->user()->idu)}}" class="nav-link">
                       <i class="far fa-circle nav-icon"></i>
@@ -289,7 +305,6 @@
                       </a>
                     </li-->
                  {{-- @endif--}}
-              @endif
             </ul>
           </li>
 
