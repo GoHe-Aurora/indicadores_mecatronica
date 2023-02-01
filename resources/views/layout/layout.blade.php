@@ -362,7 +362,7 @@
 @endif
     <footer class="main-footer">
     {{--Centar este item--}}
-      <center><strong>Universidad Tecnol&oacute;gica del Valle de Toluca - Correspondencia v1.0 Alpha.</strong></center>
+      <center><strong>Direcci&oacute;n de la Carrera Mecatr&oacute;nica y Sistemas Productivos - Indicadores de Trayectoria Educativa v1.0 Alpha.</strong></center>
     </footer>
 
     <!-- Control Sidebar -->
