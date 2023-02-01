@@ -13,7 +13,7 @@ class GruposController extends Controller
      */
     public function index()
     {
-        $alumnos = DB::select("SELECT nombre,app,apm,matricula,if(estatus=1,'Activo','Inactivo') estatus FROM alumnos;");
+        $alumnos = DB::select("SELECT a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,if(a.estatus=1,'Activo','Inactivo') estatus FROM alumnos a INNER JOIN grupos g WHERE a.grupo_id=g.idgr;");
         $json = json_encode($alumnos);
         return view("students.index", compact("json"));
     }

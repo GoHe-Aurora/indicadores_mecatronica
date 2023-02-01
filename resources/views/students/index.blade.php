@@ -79,6 +79,7 @@
                 <zg-column index='app' header='Apellido Paterno'  type='text'></zg-column>
                 <zg-column index='apm' header='Apellido Materno'  type='text'></zg-column>
                 <zg-column index='matricula' header='Matrícula'  type='text'></zg-column>
+                <zg-column index='grupo' header='Grupo'  type='text'></zg-column>
                 <zg-column index='estatus' header='Estatus'  type='text'></zg-column>
         	<!--/zg-colgroup-->
     	</zing-grid>
