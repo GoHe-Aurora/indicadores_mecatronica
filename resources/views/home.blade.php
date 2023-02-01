@@ -34,7 +34,7 @@
                                         </h5>
                                     </div>
                                     <div class="mt-3">
-                                        <h2>{{ $actividades_hoy }}</h2>
+                                        <h2>{{-- $actividades_hoy --}}</h2>
                                     </div>
                                     <h2></h2>
                                 </div>
@@ -60,7 +60,7 @@
                                         @endif
                                     </h5>
                                     <div class="text-center mt-5">
-                                        <h2>{{ $actividades_pendientes }}</h2>
+                                        <h2>{{-- $actividades_pendientes --}}</h2>
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +88,7 @@
                                         @endif
                                     </h5>
                                     <div class="text-center">
-                                        <h2>{{ $actividades_por_mes }}</h2>
+                                        <h2>{{-- $actividades_por_mes --}}</h2>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
                                 <div class="col-lg-8 col-sm-12">
                                     <div id="actividades_cerradas">
                                         <h5>ACTIVIDADES CREADAS QUE HAN SIDO CONCLUIDAS</h5>
-                                        <h2>{{ $actividades_cerradas['concluidas']}} de {{ $actividades_cerradas['total'] }}</h2><br>
+                                        <h2>{{-- $actividades_cerradas['concluidas']--}} de {{-- $actividades_cerradas['total'] --}}</h2><br>
                                     </div>
                                     <div id="actividades_en_seguimiento_concluidas">
                                         <h5> 
@@ -116,7 +116,7 @@
                                         </h5><br>
                                         <div class="text-center">
                                             <h2>
-                                                {{ $actividades_en_seguimiento['completadas']}} de {{ $actividades_en_seguimiento['total'] }}
+                                                {{-- $actividades_en_seguimiento['completadas']--}} de {{-- $actividades_en_seguimiento['total'] --}}
                                             </h2>
                                         </div>
                                     </div>
