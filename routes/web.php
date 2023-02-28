@@ -12,7 +12,9 @@ use App\Http\Controllers\TiposActividadesController;
 use App\Http\Controllers\Sistema\Panel\PanelController;
 use App\Http\Controllers\Sistema\TipoAreas\TipoAreasController;
 use App\Http\Controllers\Graficas\GraficasPorTipoAreaController;
-use App\Http\Controllers\GruposController;
+use App\Http\Controllers\Students\StudentsController;
+use App\Http\Controllers\Asesorias\AsesoriasController;
+use App\Http\Controllers\Tutorias\TutoriasController;
 
 //////////// RUTAS PARA LA PARTE INICIAL DEL SISTEMA. ///////////////
 
@@ -45,6 +47,11 @@ Route::get('/view-clear', function() {
     $exitCode = Artisan::call('view:clear');
     return 'View cache cleared';
 });
+Route::get('/storage', function() {
+    $exitCode = Artisan::call('storage:link');
+    return 'Storage created';
+});
+ 
 
 //////////////////// RUTAS DEL PANEL #1 /////////////////////////
 
@@ -56,7 +63,15 @@ Route::middleware(['auth'])->group(function () {
 //////////////////////////////////////////////  U S U A R I O S  ///////////////////////////////////////////////////////////////
    
     Route::resource('users', UsersController::class, ['names' => 'users']);
+    
+    Route::get('students/activar/{id}', [StudentsController::class,'activar'])->name('students.activar');
+    Route::get('students/desactivar/{id}', [StudentsController::class,'desactivar'])->name('students.desactivar');
+    Route::post('students/by_group', [StudentsController::class,'by_group'])->name('students.by_group');
+    Route::resource('students', StudentsController::class, ['names' => 'students']);
 
+    Route::resource('asesorias', AsesoriasController::class, ['names' => 'asesorias']);
+    Route::get('tutorias/delete/{id}', [TutoriasController::class,'delete'])->name('tutorias.delete');
+    Route::resource('tutorias', TutoriasController::class, ['names' => 'tutorias']);
     // Ruta para editar el perfil.
     Route::get('editar-perfil', [CuentasController::class, 'editar_perfil'])->name('editar-perfil');
     Route::post('editar-perfil', [CuentasController::class, 'editar_perfil_post'])->name('editar-perfil.post');
@@ -76,9 +91,6 @@ Route::middleware(['auth'])->group(function () {
     // Ruta - Estadistica inicial de gráficas por Área.
     Route::get('/dashboard/{user}',[GraficasPorTipoAreaController::class,'dashboard']);
     Route::post('/dashboard/{user}',[GraficasPorTipoAreaController::class,'getEstadisticasDeActividades']);
-
-    // Ruta - Grupos
-    Route::get('/alumnos',[GruposController::class,'index']);
 
 });
 

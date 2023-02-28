@@ -4,9 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Indicadores Mecatrónica</title>
 
-  <link href="{{asset('images/logoUTVT2.png')}}" rel="icon">
+  <link href="{{--asset('images/logoUTVT2.png')--}}" rel="icon">
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -40,25 +41,23 @@
 <div class="wrapper">
   <head class="main-header">
         <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background-color: #1c9842">
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light" style="background-color: /*#1c9842*/#060606">
           <ul class="navbar-nav">
             <li class="nav-item">
               <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
           </ul>
-          <h3 class="text-light">Universidad Tecnol&oacute;gica del Valle de Toluca
+          <h3 class="text-light">Direcci&oacute;n de la Carrera Mecatr&oacute;nica y Sistemas Productivos
           &nbsp;|&nbsp;
+
                 @if (Auth()->user()->idtu_tipos_usuarios == 1)
                     Administrador
                 @endif
                 @if (Auth()->user()->idtu_tipos_usuarios == 2)
-                    Direccion de Carrera
+                    PTC
                 @endif
                 @if (Auth()->user()->idtu_tipos_usuarios == 3)
-                    Rector
-                @endif
-                @if (Auth()->user()->idtu_tipos_usuarios == 4)
-                    Secretaria
+                    PA
                 @endif
           </h3>           
           <!-- logout -->
@@ -84,10 +83,10 @@
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
-  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <aside style="height: 104vh;" class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link text-center">
-      <img src="{{asset('images/logoUTVT.png')}}" width="70%">
+      <img src="{{--asset('images/logoUTVT.png')--}}" width="70%">
     </a>
 
     <!-- Sidebar -->
@@ -163,94 +162,37 @@
             </ul>
           </li>
         @endif
-        @if(Auth()->user()->idtu_tipos_usuarios != 1)
-
-          <!--li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-edit"></i>
-              <p>Actividades<i class="fas fa-angle-left right"></i></p>
-            </a>
-            <ul class="nav nav-treeview">
-              @if(Auth()->user()->idtu_tipos_usuarios != 1)
-              <li class="nav-item">
-                <a href="{{ url('actividades')}}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Crear Actividad</p>
-                </a>
-              </li>
-              @endif
-              @if(Auth()->user()->idtu_tipos_usuarios == 3)
-              <li class="nav-item">
-                <a href="{{ url('reporte_actividades')}}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Ver actividades</p>
-                </a>
-              </li>
-              @endif
-              <li class="nav-item">
-                @if(Auth()->user()->idtu_tipos_usuarios != 4)
-                <a href="{{ url('actividades_creadas', ['id'=>encrypt(Auth()->user()->idu)])}}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Actividades Creadas</p>
-                </a>
-                @endif
-                @if(Auth()->user()->idtu_tipos_usuarios == 4 || Auth()->user()->idtu_tipos_usuarios == 2)
-                <a href="{{ url('actividades_pendientes', ['id'=>encrypt(Auth()->user()->idu)])}}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Validación de Actividades</p>
-                </a>
-                @endif
-                @if(Auth()->user()->idtu_tipos_usuarios == 4)
-                  @php
-                    $ar = Auth()->user()->idar_areas;
-
-                    $director = DB::SELECT("SELECT idu FROM users WHERE idtu_tipos_usuarios = 2 AND idar_areas = $ar");
-                    $dir = $director[0]->idu;
-                  @endphp
-                  <a href="{{ url('actividades_creadas', ['id'=>encrypt($dir)])}}" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Actividades Creadas</p>
-                  </a>
-                @endif
-              </li>
-              <li class="nav-item">
-                <a href="{{ url('actividades_asignadas') }}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Actividades para mí</p>
-                  <br>
-                </a>
-              </li>
-            </ul>
-          </li-->
-
-          @endif
-          @if(Auth()->user()->idtu_tipos_usuarios == 1)
-          <!--li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-edit"></i>
-              <p>Actividades<i class="fas fa-angle-left right"></i></p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{ url('reporte_actividades')}}" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Ver actividades</p>
-                </a>
-              </li>
-            </ul>
-          </li-->
-          @endif
+        
+         @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+          
             <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
-             <i class="fas fa-list"></i>
-              <p>Listas</p>
+             <i class="fas fa-users"></i>
+              <p>Alumnos</p>
               <i class="fas fa-angle-left right"></i>
             </a>
             <ul class="nav nav-treeview">
             <li class="nav-item">
-                      <a href="{{ url('/alumnos')}}" class="nav-link">
-                      <i class="fas fa-users"></i>
-                      <p>Alumnos</p>
+                      <a href="{{ url('/students')}}" class="nav-link">
+                      <i class="fas fa-list"></i>
+                      <p>Lista</p>
+                      </a>
+                    </li>
+            </ul>
+          </li>
+          @endif
+          
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+             <i class="fas fa-users"></i>
+              <p>Tutorías</p>
+              <i class="fas fa-angle-left right"></i>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                      <a href="{{ url('/tutorias')}}" class="nav-link">
+                      <i class="fas fa-list"></i>
+                      <p>Lista</p>
                       </a>
                     </li>
             </ul>
@@ -327,7 +269,7 @@
 
         </ul>
         <div class="text-center">
-          <img src="{{asset('images/M-Edomex.png')}}" alt="" width="60%" class="mt-4">
+          <img src="{{--asset('images/M-Edomex.png')--}}" alt="" width="60%" class="mt-4">
         </div>
 
       </nav>
@@ -343,7 +285,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="embed-responsive embed-responsive-16by9">
-        <video class="embed-responsive-item" src="{{asset('video/Guia.mp4')}}" controls autobuffer></video>
+        <!--video class="embed-responsive-item" src="{{asset('video/Guia.mp4')}}" controls autobuffer></video-->
       </div>
     </div>
   </div>

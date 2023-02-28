@@ -1,14 +1,21 @@
 @extends('layout.layout')
 @section('content')
-
+<style type="text/css">
+    .select2-container--default .select2-selection--multiple .select2-selection__choice{
+        background-color:#000;
+    }
+    .select2-container{
+        width: 100% !important;
+    }
+</style>
+    @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
     <div class="card">
             <div class="card-header bg-success text-light" style="text-align: center;">
-                <h3>U S U A R I O S</h3>
+                <h3>A L U M N O S</h3>
             </div>
-             @if (Auth()->user()->idtu_tipos_usuarios == 1)
             <div class="card-body">
-                @foreach($usuarios as $user_edit)
-                    <form id="formulario-actualizar-usuario" action="{{ route('users.update', ['user' => $user_edit->idu]) }}" method="POST" enctype="multipart/form-data">
+                @foreach($alumno as $a)
+                    <form id="formulario-actualizar-alumno" action="{{ route('students.update', $a->ida) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PATCH')
                                 @if ($errors->any())
@@ -20,113 +27,158 @@
                                         </ul>
                                     </div>
                                 @endif
+                <div class="row">
+                <div class="form-group col-md-6 col-xs-3">
+                    <label for="">Nombre: <b class="text-danger">*</b></label>
+                    <input placeholder="Ingresa el nombre" required type="text" class="form-control" id="nombre" value="{{ $a->nombre }}" name="nombre">
+                    
+                </div>
 
-                                <div class="row">
+                <div class="col-md-6 col-xs-3 pb-3">
+                    <label for="titulo">Apellido Paterno: <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control  @error('app') is-invalid @enderror" id="titulo" name="app" value="{{ $a->app }}" placeholder="Ingresa el apellido paterno" required>
+                    
+            </div>
 
-                                <div class="form-group col-md-6 col-xs-3">
-                                        <label for="idtu_tipos_usuarios">Tipo Usuario:</label>
-                                            <select class="form-select" id="idtu_tipos_usuarios" name="idtu_tipos_usuarios" required>
-                                                <option value="">Selección</option>
-                                                    @foreach($tipos_usuarios as $tipousuario)
-                                                        <option value="{{ $tipousuario->idtu }}" {{ (old('idtu_tipos_usuarios', $user_edit->idtu_tipos_usuarios) == $tipousuario->idtu) ? 'selected' : '' }}>{{ $tipousuario->nombre }}</option>
-                                                    @endforeach
-                                            </select>
-                                    </div>
+            <div class="row">
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="apm">Apellido Materno: <b class="text-danger">*</b></label>
+                    <input type="text" class="form-control @error('apm') is-invalid @enderror" id="apm" name="apm" value="{{ $a->apm }}" placeholder="Ingresa el apellido materno" required>
+                    
+                </div>
 
-                                <div class="row">
-                                        <div class="form-group col-xs-3 col-md-6">
-                                            <label for="titulo">Título:</label>
-                                            <input type="text" class="form-control @error('titulo') is-invalid @enderror" id="titulo" name="titulo" value="{{ old('titulo', $user_edit->titulo) }}">
-                                            @error('titulo')<p class="form-control text-danger" style="font-size: 14px; font-style: italic;">El título debe ser abreviado y con punto</p>@enderror
-                                        </div>
-                                        <div class="form-group col-xs-3 col-md-6">
-                                            <label for="nombre">Nombre (S):</label>
-                                            <input type="text" class="form-control @error('nombre') is-invalid @enderror" id="nombre" name="nombre" value="{{ old('nombre', $user_edit->nombre) }}">
-                                            @error('nombre')<p class="form-control text-danger" style="font-size: 14px; font-style: italic;">El nombre admite solo letras y espacios</p>@enderror
-                                        </div>
-                                </div>
+                <div class="form-group col-xs-3 col-md-6">
+                   <label for="matricula">Matrícula: <b class="text-danger">*</b></label>
+                    <input type="number" placeholder="Ingresa una matrícula" class="form-control" id="matricula" name="matricula" value="{{ $a->matricula }}" placeholder="Ingresa una matrícula válida" required>
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="estatus">Estatus: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="estatus" name="estatus" required>
+                        <option value="">Selección</option>
+                        @foreach($estatus as $e)
+                            <option value="{{ $e->ide }}" {{ ($a->estatus_id == $e->ide) ? 'selected' : '' }}>{{ $e->nombre }}</option>
+                        @endforeach
+                    </select>
+                    
+                </div>
 
-                                <div class="row">
-                                    <div class="form-group col-xs-3 col-md-6">
-                                        <label for="app">Apellido Paterno:</label>
-                                        <input type="text" class="form-control @error('app') is-invalid @enderror" id="app" name="app" value="{{ old('app', $user_edit->app) }}">
-                                        @error('app')<p class="form-control text-danger" style="font-size: 14px; font-style: italic;">El apellido paterno admite solo letras y espacios</p>@enderror
-                                    </div>
-                                    <div class="form-group col-xs-3 col-md-6">
-                                        <label for="apm">Apellido Materno:</label>
-                                        <input type="text" class="form-control @error('apm') is-invalid @enderror" id="apm" name="apm" value="{{ old('apm', $user_edit->apm) }}">
-                                        @error('apm')<p class="form-control text-danger" style="font-size: 14px; font-style: italic;">El apellido materno admite solo letras y espacios</p>@enderror
-                                    </div>
-                                </div>
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="promedio">Promedio: <b class="text-danger">*</b></label>
+                    <input type="number" class="form-control" id="promedio" name="promedio" value="{{ $a->promedio }}" step="0.01" min="0" max="10" placeholder="Ingresa un promedio" required>
 
-                                <div class="row">
-                                    <div class="form-group col-xs-3 col-md-6">
-                                        <label for="email">Correo:</label>
-                                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $user_edit->email) }}">
-                                        @error('email')<p class="form-control text-danger" style="font-size: 14px; font-style: italic;">Ingresa un correo válido</p>@enderror
-                                    </div>
-                                    <div class="form-group col-xs-3 col-md-6">
-                                        <label for="password">Contraseña:</label>
-                                        <div class="input-group">
-                                        <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                            id="password" name="password" value="{{ old('password') }}">
-                                        <button class="btn btn-outline-secondary" type="button" id="show_password">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
-                                        {{-- <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" value="{{ old('password') }}"> --}}
-                                        @error('password')<p class="form-control text-danger" style="font-size: 14px; font-style: italic;">Ingresa una contraseña válida</p>@enderror
-                                    </div>
-                                </div>
+                </div>
+            </div>
+                <div class="row">
+                <div style="display: none;" class="form-group grupo col-xs-3 col-md-6">
+                   <label for="grupo">Grupo: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="grupo" name="grupo">
+                        <option value="">Selección</option>
+                        @foreach($grupos as $grupo)
+                            <option value="{{ $grupo->idgr }}" {{ ($a->grupo_id == $grupo->idgr) ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
+                        @endforeach
+                    </select>
+                   
+                </div>
+                <div style="display: none;" class="form-group materiasr col-xs-3 col-md-6">
+                     <label for="materiasr">Materias reprobadas: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="materiasr" multiple="multiple" name="materiasReprobadas[]" >
+                     @foreach($materias as $materia)
+                            <option value="{{ $materia->idm }}" {{ $materia->materiasrep!=null ? 'selected' : '' }}>{{ $materia->nombre }}</option>
+                        @endforeach   
+                    </select>
+                    
+                </div>
+                <div style="display: none" class="form-group desercion col-xs-3 col-md-6">
+                     <label for="desercion">Motivo: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="desercion" name="motivoDesercion">
+                        <option value="">Selección</option>
+                        @foreach($motivos_desercion as $motivo)
+                            <option value="{{ $motivo->idem }}" {{ $motivo->m != null ? 'selected' : '' }}>{{ $motivo->motivo }}</option>
+                        @endforeach
+                    </select>
+                    
+                </div>
+                <div style="display: none" class="form-group reingreso col-xs-3 col-md-6">
+                     <label for="reingreso">Motivo: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="reingreso" name="motivoReingreso">
+                        <option value="">Selección</option>
+                        @foreach($motivos_reingreso as $motivo)
+                            <option value="{{ $motivo->idem }}" {{ $motivo->m != null ? 'selected' : '' }}>{{ $motivo->motivo }}</option>
+                        @endforeach
+                    </select>
+                    
+                </div>
 
-                                <div class="row">
-                                    <div class="form-group col-xs-3 col-md-6">
-                                        <label for="idar_areas">Área:</label>
-                                        <select class="form-select" id="idar_areas" name="idar_areas">
-                                            <option value="">Selección</option>
-                                            @foreach($areas as $area)
-                                                <option value="{{ $area->idar }}" {{ ($user_edit->idar_areas == $area->idar) ? 'selected' : '' }}>{{ $area->nombretipo . ' - ' . $area->idar_areas }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="form-group col-xs-3 col-md-6">
-                                        <label for="activo">Activo:</label>
-                                        <select class="form-select" id="activo" name="activo">
-                                            <option value="">Selección</option>
-                                            <option value="1" {{ (old('activo', $user_edit->activo) == 1) ? 'selected' : '' }}>Si</option>
-                                            <option value="0" {{ (old('activo', $user_edit->activo) == 0) ? 'selected' : '' }}>No</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                  
-
-                                <div class="col-md-6 col-xs-3 pb-3">
-                                            <label for="imagen">Imagen:</label>
-                                            <br>
-                                            <img src="{{ asset("storage/imagenes_perfil/$user_edit->imagen") }}"  width="150" height="150"> 
-                                            <input type="file" class="form-control" id="imagen" name="imagen">
-                                    </div>
-                                </div>
+            </div>
 
 
                                 <div class="form-group text-center">
-                                    <button type="submit" id="submit" class="btn btn-primary"><i class="fas fa-user-check"></i></button>
-                                    <a href="{{ route('users.index') }}" class="btn btn-danger"><i class="fas fa-ban"></i></a>
+                                    <button title="Actualizar" type="submit" id="submit" class="btn btn-primary"><i class="fas fa-user-check"></i></button>
+                                    <a title="Guardar" href="{{ route('students.index') }}" class="btn btn-danger"><i class="fas fa-ban"></i></a>
                                 </div>
                     </form>
                  @endforeach
 
                  <script>
-        //Script del boton de mostrar contraseña en el formulario de registro de unosolo item
-        $('#show_password').on('click', function() {
-            var password = $('#password');
-            if (password.attr('type') === 'password') {
-                password.attr('type', 'text');
-            } else {
-                password.attr('type', 'password');
-            }
-        });
+        $( document ).ready(function() {
+
+        $('#materiasr').select2({
+                placeholder: "Selección",
+                allowClear: true
+            });
+    if($('#estatus').val()==1){
+            $('.grupo').css('display','block');
+        }else{ 
+            $('.grupo').css('display','none');
+            
+        }
+        if($('#estatus').val()==3){
+            $('.materiasr').css('display','block');
+        }else{
+            $('.materiasr').css('display','none');
+        }
+        if($('#estatus').val()==4){
+            $('.desercion').css('display','block');
+            
+        }else{
+            $('.desercion').css('display','none');
+        }
+        if($('#estatus').val()==5){
+            $('.reingreso').css('display','block');
+            
+        }else{
+            $('.reingreso').css('display','none');
+        }    
+    $('#estatus').change(function(){
+        if($(this).val()==1){
+            $('.grupo').css('display','block');
+        }else{ 
+            $('.grupo').css('display','none');
+            
+        }
+        if($(this).val()==3){
+            $('.materiasr').css('display','block');
+        }else{
+            $('.materiasr').css('display','none');
+        }
+        if($(this).val()==4){
+            $('.desercion').css('display','block');
+            
+        }else{
+            $('.desercion').css('display','none');
+        }
+        if($(this).val()==5){
+            $('.reingreso').css('display','block');
+            
+        }else{
+            $('.reingreso').css('display','none');
+        }
+    })
+}); 
+
     </script>
         </div>
     </div>

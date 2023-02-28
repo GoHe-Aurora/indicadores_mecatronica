@@ -21,9 +21,9 @@
 <div class="col-md-5 col-lg-5">
 <div class="login-wrap p-4 p-md-5">
 <div class="justify-content-center">
-<div align="center"><img src="{{asset('images/Edomex.png')}}" width="180" height="40"></div>
+<div align="center"><!--img src="{{asset('images/Edomex.png')}}" width="180" height="40"--></div>
 <br>
-<h5 align=center><b>Sistema de Seguimiento de Oficios.</b></h5>
+<h5 align=center><b>Dirección de la Carrera Mecatrónica y Sistemas Productivos - Indicadores de Trayectoria Educativa</b></h5>
 </div>
 <br>
 

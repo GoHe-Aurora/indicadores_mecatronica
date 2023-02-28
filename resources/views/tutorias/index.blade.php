@@ -8,7 +8,7 @@
         if (es) ZingGrid.registerLanguage(es, 'custom');
         </script>
     @endsection
-    @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+{{--@if (Auth()->user()->idtu_tipos_usuarios == 1)--}}
     <div class="card">
         <div class="card-header">
             @if (Session::has('mensaje'))
@@ -23,15 +23,15 @@
                     <a href="{{url('students/create')}}"><button class="btn btn-success"><i class="fas fa-user-alt"></i></button></a>
                 </div>
             </div-->
-            <form  action="{{ route('students.index') }}" method="GET">
+            <form  action="{{ route('tutorias.index') }}" method="GET">
                 @csrf
                 @method('GET')
             <div class="row">
             <div class="col-sm-4">
-                <label for="">Generación Inicio: <strong style="color: red;">*</strong></label>
+                
             </div>
             <div class="col-sm-4">
-                <label for="">Generación Fin: <strong style="color: red;">*</strong></label>
+               
             </div>
 
             <div class="col-sm-4">
@@ -40,26 +40,16 @@
         </div>
         <div class="row">
             <div class="col-sm-4">
-                <select class="form-control" name="fechaIni" id="fechaIni">
-                @foreach($years as $year)
-                            <option value="{{ $year }}" {{ ($year == $fechaIni) ? 'selected' : '' }}>{{ $year }}</option>
-                        @endforeach
-                </select>  
+                
                 <br>
-                <button type="submit" class="btn btn-primary mt-1" id="button">Enviar</button>
-                <a type="button" class="btn btn-primary mt-1" href="{{ url('/students')}}" >Limpiar
              <!--button type="button" class="btn btn-primary mt-1" id="limpiar">Limpiar</button-->
                  <!--button id="btn_exportar_excel" type="button" class="btn btn-success mt-1">
                 Exportar a EXCEL
             </button-->
-                <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('students.create')}}"><i class="fas fa-user-plus"></i></a>
+                <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('tutorias.create')}}"><i class="fas fa-user-plus"></i></a>
             </div>
             <div class="col-sm-4">
-                 <select class="form-control" name="fechaFin" id="fechaFin">
-                @foreach($years as $year)
-                            <option value="{{ $year }}" {{ ($year == $fechaFin) ? 'selected' : '' }}>{{ $year }}</option>
-                        @endforeach
-                </select>      
+                     
 
             </div>
             <div class="col-sm-4">
@@ -74,7 +64,7 @@
      
     	<zing-grid
         	lang="custom"
-        	caption='Lista de alumnos'
+        	caption='Lista de tutorias'
         	sort
         	search
         	pager
@@ -91,24 +81,17 @@
                 <zg-column index='nombre' header='Nombre'  type='text'></zg-column>
                 <zg-column index='app' header='Apellido Paterno'  type='text'></zg-column>
                 <zg-column index='apm' header='Apellido Materno'  type='text'></zg-column>
-                <zg-column index='matricula' header='Matrícula'  type='text'></zg-column>
-                <zg-column index='grupo' header='Grupo'  type='text'></zg-column>
-                <zg-column index='estatus' header='Estatus'  type='text'></zg-column>
-                <zg-column index='motivo' header='Motivo'  type='text'></zg-column>
-                <zg-column index='promedio' header='Promedio'  type='text'></zg-column>
-                <zg-column index='activo' header='Activo' type='text'></zg-column>
+                <zg-column index='tipo' header='Tipo'  type='text'></zg-column>
+                <zg-column index='fecha' header='Fecha'  type='text'></zg-column>
+                <zg-column index='archivo' header='Archivo'  type='text'></zg-column>
                 <zg-column align="center" filter ="disabled" index='operaciones' header='Operaciones' type='text'></zg-column>
                 
         	<!--/zg-colgroup-->
     	</zing-grid>
 
 	</div>
-    @foreach ($alumnos as $alumno)
-    <form id="activar-alumno-{{ $alumno->ida }}" class="ocultar" action="{{ route('students.activar',$alumno->ida) }}" method="GET">
-        @csrf
-        @method('DELETE')
-    </form>
-    <form id="desactivar-alumno-{{ $alumno->ida }}" class="ocultar" action="{{ route('students.desactivar',$alumno->ida) }}" method="GET">
+    @foreach ($tutorias as $tutoria)
+    <form id="eliminar-tutoria-{{ $tutoria->idt }}" class="ocultar" action="{{ route('tutorias.delete',$tutoria->idt) }}" method="GET">
         @csrf
         @method('DELETE')
     </form>
@@ -117,5 +100,5 @@
         
      </script>
 
-@endif
+{{--@endif--}}
 @endsection
