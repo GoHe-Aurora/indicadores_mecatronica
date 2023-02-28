@@ -91,6 +91,7 @@ class TutoriasController extends Controller
         $file = $request->archivo;
         $name = time() . '.' . $file->getClientOriginalExtension();
         $originalName = $request->archivo->getClientOriginalName();
+        Storage::disk('evidencia_tutorias')->put($name, File::get($file));
         Storage::disk('public')->put('evidencia_tutorias/' . $name, File::get($file));
         }
         Tutoria::create([
@@ -150,6 +151,8 @@ class TutoriasController extends Controller
                 $name = time() . '.' . $file->getClientOriginalExtension();
                 $originalName = $request->archivo->getClientOriginalName(); 
                 Storage::disk('public')->delete('evidencia_tutorias/'.$request->old);
+                Storage::disk('evidencia_tutorias')->delete($request->old);
+                Storage::disk('evidencia_tutorias')->put($name, File::get($file));
                 Storage::disk('public')->put('evidencia_tutorias/' . $name, File::get($file)); 
             }
             
@@ -170,6 +173,7 @@ class TutoriasController extends Controller
     {
         $archivo = DB::select("SELECT archivo FROM tutorias WHERE idt=$idt;");
         Storage::disk('public')->delete('evidencia_tutorias/'.$archivo[0]->archivo);
+        Storage::disk('evidencia_tutorias')->delete($archivo[0]->archivo);
         DB::delete("DELETE FROM tutorias WHERE idt=$idt;"); 
         return back()->with('mensaje', 'Tutoría eliminada exitosamente');
     }

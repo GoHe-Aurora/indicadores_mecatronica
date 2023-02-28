@@ -58,6 +58,12 @@ return [
             'url' => env('APP_URL').'/storage/imagenes_perfil',
             'visibility' => 'public',
         ],
+        'evidencia_tutorias' => [
+            'driver' => 'local',
+            'root' => 'storage/evidencia_tutorias',
+            'url' => public_path(),
+            'visibility' => 'public',
+        ],
 
     ],
 
