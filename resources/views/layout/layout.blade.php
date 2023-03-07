@@ -200,6 +200,22 @@
 
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
+             <i class="fas fa-users"></i>
+              <p>Asesorías</p>
+              <i class="fas fa-angle-left right"></i>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                      <a href="{{ url('/asesorias')}}" class="nav-link">
+                      <i class="fas fa-list"></i>
+                      <p>Lista</p>
+                      </a>
+                    </li>
+            </ul>
+          </li>
+
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
               <i class="fas fa-chart-pie"></i>
               <p>Gr&aacute;ficas</p>
               <i class="fas fa-angle-left right"></i>

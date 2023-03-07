@@ -25,33 +25,35 @@ class AsesoriasController extends Controller
     {
         
         $array = array();
-        $alumnos = DB::select("");
-        function btn($ida,$activo){
+        $asesorias = DB::select("SELECT a.ida,a.nombre,a.app,a.apm,ase.tipo,asa.observaciones FROM alumnos a INNER JOIN asesorias_alumnos asa ON a.ida=asa.idal INNER JOIN asesorias ase ON ase.idas=asa.idas; ");
+        function btn($ida){
         
                 $botones = "<a href=\"#desactivar-alumno-\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('desactivar-alumno-$ida')\"><i class='fas fa-power-off'></i></a>"
                          . "<a href= ". route('students.edit', $ida ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>". "<a href= ". route('students.show', $ida ) ." class=\"btn btn-secondary mt-1\"> <i class='fa fa-eye'></i> </a>";
                 
             return $botones;
         }
-        $years = range(2000, date("Y"));
-        foreach ($alumnos as $alumno){
+        function ck(){
+            $ck = '<input type="checkbox" name="academica" id="academica" value="1">
+<label for="academica">Académica</label>
+<input form="myForm" type="checkbox" name="nivelacion" id="nivelacion"  value="2"> 
+<label for="nivelacion">Nivelación</label>';
+            return $ck;
+        }
+        foreach ($asesorias as $asesoria){
 
             array_push($array, array(
-                'ida'                 => $alumno->ida,
-                'nombre'              => $alumno->nombre,
-                'app'                 => $alumno->app,
-                'apm'                 => $alumno->apm,
-                'matricula'           => $alumno->matricula,
-                'grupo'               => $alumno->grupo,
-                'estatus'             => $alumno->estatus,
-                'motivo'              => $alumno->motivo,
-                'promedio'            => $alumno->promedio,
-                'activo'              => $alumno->activo==1 ? 'ACTIVO' : 'DESHABILITADO',
-                'operaciones'         => btn($alumno->ida,$alumno->activo)
+                'idas'                => $asesoria->ida,
+                'nombre'              => $asesoria->nombre,
+                'app'                 => $asesoria->app,
+                'apm'                 => $asesoria->apm,
+                'observaciones'       => $asesoria->observaciones,
+                'tipo'                => ck(),
+                'operaciones'         => btn($asesoria->ida)
             ));
         }
         $json = json_encode($array);
-        return view("students.index", compact("json","alumnos","years","fechaIni","fechaFin"));
+        return view("asesorias.index", compact("json","asesorias"));
     }
 
     /**

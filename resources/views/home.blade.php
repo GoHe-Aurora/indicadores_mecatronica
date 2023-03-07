@@ -65,7 +65,7 @@
                         style="background-color: #00b29a; cursor: pointer;"
                         id=""
                     >
-                        <div class="card-body text-white">
+                        <div class="card-body asesorias text-white">
                             <div class="row text-center">
                                 <div class="col-lg-4 col-sm-12 mt-4">
                                     <i class="fa fa-book" style="font-size: 80px"></i>
@@ -182,6 +182,9 @@
         const user_id = '{{ $user }}';
         $('.tutorias').click(function(){
             location.href = "{{route('tutorias.index')}}";
+        })
+        $('.asesorias').click(function(){
+            location.href = "{{route('asesorias.index')}}";
         })
     </script>
     <script  type="module" src="/js/panel/panel.js"></script>

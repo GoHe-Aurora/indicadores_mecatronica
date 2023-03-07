@@ -34,7 +34,7 @@ class StudentsController extends Controller
              $order = "ORDER BY SUBSTRING(a.matricula, 3, 2) DESC";
         }
         $array = array();
-        $alumnos = DB::select("SELECT a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,e.nombre estatus,a.promedio_general promedio,a.activo,CASE
+        $alumnos = DB::select("SELECT a.ida,a.nombre,a.app,a.apm,a.matricula,IF(a.genero=1,'Masculino','Femenino') genero,g.nombre grupo,e.nombre estatus,a.promedio_general promedio,a.activo,CASE
     WHEN a.estatus_id = 1 THEN CONCAT(c.cuatrimestre,'° Cuatrimestre')
     WHEN a.estatus_id = 3 THEN GROUP_CONCAT(CONCAT(m.nombre,' - ',m.descripcion) SEPARATOR ' | ')
     WHEN a.estatus_id = 4 THEN em.motivo 
@@ -60,6 +60,7 @@ class StudentsController extends Controller
                 'app'                 => $alumno->app,
                 'apm'                 => $alumno->apm,
                 'matricula'           => $alumno->matricula,
+                'genero'              => $alumno->genero,
                 'grupo'               => $alumno->grupo,
                 'estatus'             => $alumno->estatus,
                 'motivo'              => $alumno->motivo,
@@ -109,7 +110,8 @@ class StudentsController extends Controller
             'nombre' => 'required|regex:/^[\pL\s\-]+$/u|max:255',
             'app'    => 'required|regex:/^[\pL\s\-]+$/u|max:255',
             'apm'   => 'required|regex:/^[\pL\s\-]+$/u|max:255',
-            'matricula' => 'numeric|required|min:111111111|max:99999999999',
+            'matricula' => 'numeric|required|min:111111111|max:999999999',
+            'genero'  => 'required',
             'estatus'  => 'required',
             'promedio'  => 'required|numeric',
             $campo => 'required',
@@ -128,10 +130,12 @@ class StudentsController extends Controller
             'app'      => $request->app,
             'apm'      => $request->apm,
             'matricula'    => $request->matricula,
+            'genero'    => $request->genero,
             'grupo_id' => $request->estatus==1 ? $request->grupo : null,
             'promedio_general' => $request->promedio,
             'estatus_id' => $request->estatus,
-            'motivo' => $motivo
+            'motivo' => $motivo,
+            'activo' => $request->estatus==1 ? 1 : 0 
         ])->ida;
          
         if($request->estatus==3){
@@ -174,7 +178,7 @@ class StudentsController extends Controller
     }
     public function edit($ida)
     {
-        $alumno = DB::select("SELECT a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,e.nombre estatus,a.estatus_id,a.grupo_id,a.promedio_general promedio,a.activo,CASE
+        $alumno = DB::select("SELECT a.ida,a.nombre,a.app,a.apm,a.matricula,a.genero,g.nombre grupo,e.nombre estatus,a.estatus_id,a.grupo_id,a.promedio_general promedio,a.activo,CASE
     WHEN a.estatus_id = 1 THEN CONCAT(c.cuatrimestre,'° Cuatrimestre')
     WHEN a.estatus_id = 3 THEN GROUP_CONCAT(m.nombre SEPARATOR ' | ')
     WHEN a.estatus_id = 4 THEN em.motivo 
@@ -212,7 +216,8 @@ class StudentsController extends Controller
             'nombre' => 'required|regex:/^[\pL\s\-]+$/u|max:255',
             'app'    => 'required|regex:/^[\pL\s\-]+$/u|max:255',
             'apm'   => 'required|regex:/^[\pL\s\-]+$/u|max:255',
-            'matricula' => 'numeric|required|min:111111111|max:99999999999',
+            'matricula' => 'numeric|required|min:111111111|max:999999999',
+            'genero'  => 'required',
             'estatus'  => 'required',
             'promedio'  => 'required|numeric',
             $campo => 'required',
@@ -231,10 +236,12 @@ class StudentsController extends Controller
             'app'      => $request->app,
             'apm'      => $request->apm,
             'matricula'    => $request->matricula,
+            'genero'    => $request->genero,
             'grupo_id' => $request->estatus==1 ? $request->grupo : null,
             'promedio_general' => $request->promedio,
             'estatus_id' => $request->estatus,
-            'motivo' => $motivo
+            'motivo' => $motivo,
+            'activo' => $request->estatus==1 ? 1 : 0 
         ]);
          
         if($request->estatus==3){

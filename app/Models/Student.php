@@ -12,7 +12,7 @@ class Student extends Model
     protected $table = 'alumnos';
     protected $primaryKey = 'ida';
     protected $fillable = [
-        'nombre','app','apm','matricula','grupo_id','promedio_general','estatus_id','motivo','activo'
+        'nombre','app','apm','matricula','genero','grupo_id','promedio_general','estatus_id','motivo','activo'
     ];
 
 }

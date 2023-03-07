@@ -26,7 +26,7 @@ class TutoriasController extends Controller
     {
         
         $array = array();
-        $tutorias = DB::select("SELECT t.idt,m.nombre,m.app,m.apm,t.tipo,t.fecha,t.archivo,t.archivo_nombre FROM maestros m INNER JOIN tutorias t ON m.idm = t.maestro_id;");
+        $tutorias = DB::select("SELECT t.idt,m.nombre,m.app,m.apm,t.tipo,g.nombre grupo,CONCAT(a.nombre,' ',a.app,' ',a.apm) alumno,t.fecha,t.archivo,t.archivo_nombre FROM maestros m INNER JOIN tutorias t ON m.idm = t.maestro_id LEFT JOIN grupos g ON t.grupo_id=g.idgr LEFT JOIN alumnos a ON t.alumno_id=a.ida;");
         function archivo($archivo,$name){
             $link = "<a href='./storage/evidencia_tutorias/".$archivo."' target='_blank'>".$name."</a>";
             return $link;
@@ -45,7 +45,7 @@ class TutoriasController extends Controller
                 'nombre'              => $tutoria->nombre,
                 'app'                 => $tutoria->app,
                 'apm'                 => $tutoria->apm,
-                'tipo'                => $tutoria->tipo==1 ? 'Individual' :  'Grupal',
+                'tipo'                => $tutoria->tipo==1 ? 'Individual ('.$tutoria->grupo.'-'.$tutoria->alumno.')' :  'Grupal ('.$tutoria->grupo.')',
                 'fecha'               => $tutoria->fecha,
                 'archivo'             => archivo($tutoria->archivo,$tutoria->archivo_nombre),
                 'operaciones'         => btn($tutoria->idt),
@@ -162,8 +162,8 @@ class TutoriasController extends Controller
                 'grupo_id'      => $request->grupo,
                 'alumno_id'      => $request->tipo==1 ? $request->alumno : null,
                 'fecha'      => date('Y-m-d H:i:s', strtotime($request->fecha)),
-                'archivo_nombre'    => isset($request->archivo) ? $originalName : null,
-                'archivo'    => isset($request->archivo) ? $name : null,
+                'archivo_nombre'    => isset($request->archivo) ? $originalName : $request->nombre_old,
+                'archivo'    => isset($request->archivo) ? $name : $request->old,
             ]);   
                 return redirect()->route('tutorias.index')->with('mensaje', 'Tutoría actualizada exitosamente');
             

@@ -57,12 +57,11 @@
             </div>
             <div class="row">
                 <div class="form-group col-xs-3 col-md-6">
-                     <label for="estatus">Estatus: <b class="text-danger">*</b></label>
-                    <select class="form-select" id="estatus" name="estatus" required>
+                     <label for="genero">Género: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="genero" name="genero" required>
                         <option value="">Selección</option>
-                        @foreach($estatus as $e)
-                            <option value="{{ $e->ide }}" {{ (old('estatus') == $e->ide) ? 'selected' : '' }}>{{ $e->nombre }}</option>
-                        @endforeach
+                            <option value="0">Femenino</option>
+                             <option value="1">Masculino</option>
                     </select>
                     
                 </div>
@@ -74,6 +73,16 @@
                 </div>
             </div>
             <div class="row">
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="estatus">Estatus: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="estatus" name="estatus" required>
+                        <option value="">Selección</option>
+                        @foreach($estatus as $e)
+                            <option value="{{ $e->ide }}" {{ (old('estatus') == $e->ide) ? 'selected' : '' }}>{{ $e->nombre }}</option>
+                        @endforeach
+                    </select>
+                    
+                </div>
                 <div style="display: none;" class="form-group grupo col-xs-3 col-md-6">
                    <label for="grupo">Grupo: <b class="text-danger">*</b></label>
                     <select class="form-select" id="grupo" name="grupo">

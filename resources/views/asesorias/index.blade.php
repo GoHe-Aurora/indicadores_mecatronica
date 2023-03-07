@@ -23,7 +23,7 @@
                     <a href="{{url('students/create')}}"><button class="btn btn-success"><i class="fas fa-user-alt"></i></button></a>
                 </div>
             </div-->
-            <form  action="{{ route('tutorias.index') }}" method="GET">
+            <form  action="{{ route('asesorias.index') }}" method="GET">
                 @csrf
                 @method('GET')
             <div class="row">
@@ -46,7 +46,7 @@
                  <!--button id="btn_exportar_excel" type="button" class="btn btn-success mt-1">
                 Exportar a EXCEL
             </button-->
-                <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('tutorias.create')}}"><i class="fas fa-user-plus"></i></a>
+                <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('asesorias.create')}}"><i class="fas fa-user-plus"></i></a>
             </div>
             <div class="col-sm-4">
                      
@@ -64,7 +64,7 @@
      
     	<zing-grid
         	lang="custom"
-        	caption='Lista de Tutorías'
+        	caption='Lista de Asesorías'
         	sort
         	search
         	pager
@@ -82,20 +82,19 @@
                 <zg-column index='app' header='Apellido Paterno'  type='text'></zg-column>
                 <zg-column index='apm' header='Apellido Materno'  type='text'></zg-column>
                 <zg-column index='tipo' header='Tipo'  type='text'></zg-column>
-                <zg-column index='fecha' header='Fecha'  type='text'></zg-column>
-                <zg-column index='archivo' header='Archivo'  type='text'></zg-column>
+                <zg-column index='observaciones' header='Obervaciones'  type='text'></zg-column>
                 <zg-column align="center" filter ="disabled" index='operaciones' header='Operaciones' type='text'></zg-column>
                 
         	<!--/zg-colgroup-->
     	</zing-grid>
 
 	</div>
-    @foreach ($tutorias as $tutoria)
-    <form id="eliminar-tutoria-{{ $tutoria->idt }}" class="ocultar" action="{{ route('tutorias.delete',$tutoria->idt) }}" method="GET">
+    {{--@foreach ($asesorias as $asesoria)
+    <form id="eliminar-asesoria-{{ $asesoria->idas }}" class="ocultar" action="{{ route('asesorias.delete',$asesoria->idas) }}" method="GET">
         @csrf
         @method('DELETE')
     </form>
-     @endforeach
+     @endforeach--}}
      <script type="text/javascript">
         
      </script>

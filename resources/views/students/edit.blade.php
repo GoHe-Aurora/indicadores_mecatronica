@@ -55,6 +55,22 @@
             </div>
             <div class="row">
                 <div class="form-group col-xs-3 col-md-6">
+                     <label for="genero">Género: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="genero" name="genero" required>
+                        <option value="">Selección</option>
+                            <option value="0" {{ ($a->genero == 0) ? 'selected' : '' }}>Femenino</option>
+                             <option value="1" {{ ($a->genero == 1) ? 'selected' : '' }}>Masculino</option>
+                    </select>
+                    
+                </div>
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="promedio">Promedio: <b class="text-danger">*</b></label>
+                    <input type="number" class="form-control" id="promedio" name="promedio" value="{{ $a->promedio }}" step="0.01" min="0" max="10" placeholder="Ingresa un promedio" required>
+
+                </div>
+            </div>
+                <div class="row">
+                    <div class="form-group col-xs-3 col-md-6">
                      <label for="estatus">Estatus: <b class="text-danger">*</b></label>
                     <select class="form-select" id="estatus" name="estatus" required>
                         <option value="">Selección</option>
@@ -64,14 +80,6 @@
                     </select>
                     
                 </div>
-
-                <div class="form-group col-xs-3 col-md-6">
-                     <label for="promedio">Promedio: <b class="text-danger">*</b></label>
-                    <input type="number" class="form-control" id="promedio" name="promedio" value="{{ $a->promedio }}" step="0.01" min="0" max="10" placeholder="Ingresa un promedio" required>
-
-                </div>
-            </div>
-                <div class="row">
                 <div style="display: none;" class="form-group grupo col-xs-3 col-md-6">
                    <label for="grupo">Grupo: <b class="text-danger">*</b></label>
                     <select class="form-select" id="grupo" name="grupo">
