@@ -87,26 +87,6 @@ class ValoracionAEController extends Controller
         return redirect()->route('valoracion_ae.index')->with('mensaje', 'El registro se ha guardado exitosamente');
     }
 
-    /**
-     * Vista para mostrar un solo usuario.
-     */
-    public function show($idu)
-    {
-        $alumno = 1;
-        return view('students.show', compact('alumno'));
-            
-    }
-
-    /**
-     * Vista que muestra un formulario para editar un usuario.
-     */
-    public function activar($id)
-    {
-        DB::update("UPDATE alumnos SET activo=1 WHERE ida=$id;");
-        
-        return back()->with('mensaje', 'El alumno se ha habilitado exitosamente');
-
-    }
     public function edit($idv)
     {
         $alumno = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,g.idgr FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON a.grupo_id=g.idgr WHERE v.idv=$idv;");  
@@ -135,18 +115,10 @@ class ValoracionAEController extends Controller
             
     }
 
-    public function desactivar($id)
+    public function delete($idv)
     {
-        DB::update("UPDATE alumnos SET activo=0 WHERE ida=$id;");
-        return back()->with('mensaje', 'El alumno se ha deshabilitado exitosamente');
+        DB::delete("DELETE FROM valoracion_ae WHERE idv=$idv;"); 
+        return back()->with('mensaje', 'Registro eliminado exitosamente');
     }
 
-    /**
-     * Elimina un usuario.
-     */
-    public function destroy($ida)
-    {
-       
-        return back()->with('mensaje', 'El alumno se ha eliminado exitosamente');
-    }
 }

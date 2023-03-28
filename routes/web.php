@@ -74,6 +74,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('asesorias', AsesoriasController::class, ['names' => 'asesorias']);
     Route::get('tutorias/delete/{id}', [TutoriasController::class,'delete'])->name('tutorias.delete');
     Route::resource('tutorias', TutoriasController::class, ['names' => 'tutorias']);
+    Route::get('valoracion_ae/delete/{id}', [ValoracionAEController::class,'delete'])->name('valoracion_ae.delete');
     Route::resource('valoracion_ae', ValoracionAEController::class, ['names' => 'valoracion_ae']);
     // Ruta para editar el perfil.
     Route::get('editar-perfil', [CuentasController::class, 'editar_perfil'])->name('editar-perfil');

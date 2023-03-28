@@ -98,7 +98,7 @@
 
 	</div>
     @foreach ($alumnos as $alumno)
-    <form id="eliminar-vae-{{ $alumno->idv }}" class="ocultar" action="{{ route('valoracion_ae.destroy',$alumno->idv) }}" method="GET">
+    <form id="eliminar-vae-{{ $alumno->idv }}" class="ocultar" action="{{ route('valoracion_ae.delete',$alumno->idv) }}" method="GET">
         @csrf
         @method('DELETE')
     </form>
