@@ -8,6 +8,7 @@
         width: 100% !important;
     }
 </style>
+@if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
     <div class="card">
             <div class="card-header bg-success text-light" style="text-align: center;">
                 <h3>T U T O R Í A S</h3>
@@ -140,5 +141,5 @@
     </script>
         </div>
     </div>
-            {{--@endif--}}
+@endif
 @endsection

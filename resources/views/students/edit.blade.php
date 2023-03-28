@@ -137,7 +137,7 @@
                 placeholder: "Selección",
                 allowClear: true
             });
-    if($('#estatus').val()==1){
+    if($('#estatus').val()==1 || $('#estatus').val()==5){
             $('.grupo').css('display','block');
         }else{ 
             $('.grupo').css('display','none');
@@ -161,7 +161,7 @@
             $('.reingreso').css('display','none');
         }    
     $('#estatus').change(function(){
-        if($(this).val()==1){
+        if($(this).val()==1 || $('#estatus').val()==5){
             $('.grupo').css('display','block');
         }else{ 
             $('.grupo').css('display','none');

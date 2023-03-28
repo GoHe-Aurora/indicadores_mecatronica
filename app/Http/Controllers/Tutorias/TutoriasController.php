@@ -26,7 +26,7 @@ class TutoriasController extends Controller
     {
         
         $array = array();
-        $tutorias = DB::select("SELECT t.idt,m.nombre,m.app,m.apm,t.tipo,g.nombre grupo,CONCAT(a.nombre,' ',a.app,' ',a.apm) alumno,t.fecha,t.archivo,t.archivo_nombre FROM maestros m INNER JOIN tutorias t ON m.idm = t.maestro_id LEFT JOIN grupos g ON t.grupo_id=g.idgr LEFT JOIN alumnos a ON t.alumno_id=a.ida;");
+        $tutorias = DB::select("SELECT t.idt,u.nombre,u.app,u.apm,t.tipo,g.nombre grupo,CONCAT(a.nombre,' ',a.app,' ',a.apm) alumno,t.fecha,t.archivo,t.archivo_nombre FROM users u INNER JOIN tutorias t ON u.idu = t.maestro_id LEFT JOIN grupos g ON t.grupo_id=g.idgr LEFT JOIN alumnos a ON t.alumno_id=a.ida;");
         function archivo($archivo,$name){
             $link = "<a href='./storage/evidencia_tutorias/".$archivo."' target='_blank'>".$name."</a>";
             return $link;
@@ -60,7 +60,7 @@ class TutoriasController extends Controller
      */
     public function create()
     {
-        $maestros = DB::select("SELECT idm,nombre,app,apm FROM maestros;");
+        $maestros = DB::select("SELECT idu,nombre,app,apm FROM users WHERE idtu_tipos_usuarios=2 OR idtu_tipos_usuarios=3;");
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;"); 
         return view( 'tutorias.create', compact('maestros','grupos'));
 
@@ -119,8 +119,8 @@ class TutoriasController extends Controller
     
     public function edit($idt)
     {
-        $tutoria = DB::select("SELECT t.idt,t.maestro_id,t.tipo,t.fecha,t.archivo,t.archivo_nombre,t.grupo_id,t.alumno_id FROM maestros m INNER JOIN tutorias t ON m.idm = t.maestro_id WHERE t.idt=$idt;");  
-        $maestros = DB::select("SELECT idm,nombre,app,apm FROM maestros;"); 
+        $tutoria = DB::select("SELECT t.idt,t.maestro_id,t.tipo,t.fecha,t.archivo,t.archivo_nombre,t.grupo_id,t.alumno_id FROM users u INNER JOIN tutorias t ON u.idu = t.maestro_id AND (u.idtu_tipos_usuarios=2 OR u.idtu_tipos_usuarios=3) WHERE t.idt=$idt;");   
+        $maestros = DB::select("SELECT idu,nombre,app,apm FROM users WHERE u.idtu_tipos_usuarios=2 OR u.idtu_tipos_usuarios=3;"); 
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;");  
             return view( 'tutorias.edit', compact('tutoria','maestros','grupos'));
     }

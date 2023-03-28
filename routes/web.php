@@ -15,6 +15,7 @@ use App\Http\Controllers\Graficas\GraficasPorTipoAreaController;
 use App\Http\Controllers\Students\StudentsController;
 use App\Http\Controllers\Asesorias\AsesoriasController;
 use App\Http\Controllers\Tutorias\TutoriasController;
+use App\Http\Controllers\ValoracionAE\ValoracionAEController;
 
 //////////// RUTAS PARA LA PARTE INICIAL DEL SISTEMA. ///////////////
 
@@ -68,10 +69,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('students/desactivar/{id}', [StudentsController::class,'desactivar'])->name('students.desactivar');
     Route::post('students/by_group', [StudentsController::class,'by_group'])->name('students.by_group');
     Route::resource('students', StudentsController::class, ['names' => 'students']);
-
+    Route::post('asesorias/update_tipo', [AsesoriasController::class,'update_tipo'])->name('asesorias.update_tipo');
+    Route::post('asesorias/update_obs', [AsesoriasController::class,'update_obs'])->name('asesorias.update_obs');
     Route::resource('asesorias', AsesoriasController::class, ['names' => 'asesorias']);
     Route::get('tutorias/delete/{id}', [TutoriasController::class,'delete'])->name('tutorias.delete');
     Route::resource('tutorias', TutoriasController::class, ['names' => 'tutorias']);
+    Route::resource('valoracion_ae', ValoracionAEController::class, ['names' => 'valoracion_ae']);
     // Ruta para editar el perfil.
     Route::get('editar-perfil', [CuentasController::class, 'editar_perfil'])->name('editar-perfil');
     Route::post('editar-perfil', [CuentasController::class, 'editar_perfil_post'])->name('editar-perfil.post');

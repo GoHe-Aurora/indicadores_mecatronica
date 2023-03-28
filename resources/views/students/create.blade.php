@@ -60,8 +60,8 @@
                      <label for="genero">Género: <b class="text-danger">*</b></label>
                     <select class="form-select" id="genero" name="genero" required>
                         <option value="">Selección</option>
-                            <option value="0">Femenino</option>
-                             <option value="1">Masculino</option>
+                            <option {{ (old('genero') == 0) ? 'selected' : '' }} value="0">Femenino</option>
+                             <option {{ (old('genero') == 1) ? 'selected' : '' }} value="1">Masculino</option>
                     </select>
                     
                 </div>
@@ -140,7 +140,7 @@
                 placeholder: "Selección",
                 allowClear: true
             });
-    if($('#estatus').val()==1){
+    if($('#estatus').val()==1 || $('#estatus').val()==5){
             $('.grupo').css('display','block');
         }else{ 
             $('.grupo').css('display','none');
@@ -164,7 +164,7 @@
             $('.reingreso').css('display','none');
         }    
     $('#estatus').change(function(){
-        if($(this).val()==1){
+        if($(this).val()==1 || $('#estatus').val()==5){
             $('.grupo').css('display','block');
         }else{ 
             $('.grupo').css('display','none');

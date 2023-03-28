@@ -23,12 +23,19 @@ class StudentsController extends Controller
      */
     public function index(Request $request)
     {
+        $tipo = auth()->user()->idtu_tipos_usuarios;
         $query = '';
         $fechaIni = '';
         $fechaFin = '';
         $order = '';
+        if($tipo==1){
+            $condition1 = "LEFT JOIN grupos g ON a.grupo_id=g.idgr";
+        }else if($tipo==2){
+            $id = auth()->user()->idu;
+            $condition1 = "INNER JOIN grupos g ON a.grupo_id=g.idgr AND g.user_id=$id"; 
+        }
         if($request->fechaIni){
-             $query = "WHERE SUBSTRING(a.matricula, 3, 2) BETWEEN SUBSTRING($request->fechaIni, 3, 2) AND SUBSTRING($request->fechaFin, 3, 2)";
+             $query = "WHERE AND SUBSTRING(a.matricula, 3, 2) BETWEEN SUBSTRING($request->fechaIni, 3, 2) AND SUBSTRING($request->fechaFin, 3, 2)";
              $fechaIni = $request->fechaIni;
              $fechaFin = $request->fechaFin;
              $order = "ORDER BY SUBSTRING(a.matricula, 3, 2) DESC";
@@ -39,7 +46,7 @@ class StudentsController extends Controller
     WHEN a.estatus_id = 3 THEN GROUP_CONCAT(CONCAT(m.nombre,' - ',m.descripcion) SEPARATOR ' | ')
     WHEN a.estatus_id = 4 THEN em.motivo 
     WHEN a.estatus_id = 5 THEN em.motivo
-    ELSE '' END motivo FROM alumnos a LEFT JOIN grupos g ON a.grupo_id=g.idgr INNER JOIN estatus e ON a.estatus_id=e.ide LEFT JOIN cuatrimestres c ON g.cuatrimestre_id=c.idc LEFT JOIN estatus_motivos em ON em.idem=a.motivo LEFT JOIN materias_reprobadas mr ON a.ida=mr.alumno_id LEFT JOIN materias m ON m.idm=mr.materia_id $query GROUP BY a.ida $order;");
+    ELSE '' END motivo FROM alumnos a $condition1 INNER JOIN estatus e ON a.estatus_id=e.ide LEFT JOIN cuatrimestres c ON g.cuatrimestre_id=c.idc LEFT JOIN estatus_motivos em ON em.idem=a.motivo LEFT JOIN materias_reprobadas mr ON a.ida=mr.alumno_id LEFT JOIN materias m ON m.idm=mr.materia_id $query GROUP BY a.ida $order;");
         function btn($ida,$activo){
             if($activo==1){
                 $botones = "<a href=\"#desactivar-alumno-\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('desactivar-alumno-$ida')\"><i class='fas fa-power-off'></i></a>"
@@ -93,9 +100,10 @@ class StudentsController extends Controller
     public function store(Request $request)
     {
         $arraymr = array();
-
+            $grupo = '';
         if($request->estatus==1){
-            $campo  = 'grupo';   
+            $campo  = 'grupo'; 
+            $grupo = 'required';  
             }else if($request->estatus==2){
             $campo  = 'estatus';
             }else if($request->estatus==3){
@@ -104,6 +112,7 @@ class StudentsController extends Controller
             $campo  = 'motivoDesercion';
             }else if($request->estatus==5){
             $campo  = 'motivoReingreso';
+            $grupo = 'required';
             }
 
         $validator = $request->validate([
@@ -114,6 +123,7 @@ class StudentsController extends Controller
             'genero'  => 'required',
             'estatus'  => 'required',
             'promedio'  => 'required|numeric',
+            'grupo' => $grupo,
             $campo => 'required',
             
         ]);
@@ -131,11 +141,11 @@ class StudentsController extends Controller
             'apm'      => $request->apm,
             'matricula'    => $request->matricula,
             'genero'    => $request->genero,
-            'grupo_id' => $request->estatus==1 ? $request->grupo : null,
+            'grupo_id' => $request->estatus==1 || $request->estatus==5 ? $request->grupo : null,
             'promedio_general' => $request->promedio,
             'estatus_id' => $request->estatus,
             'motivo' => $motivo,
-            'activo' => $request->estatus==1 ? 1 : 0 
+            'activo' => $request->estatus==1 || $request->estatus==5 ? 1 : 0 
         ])->ida;
          
         if($request->estatus==3){
@@ -172,7 +182,11 @@ class StudentsController extends Controller
     public function by_group(Request $request)
     {
         $idgr = $request->grupo_id;
-        $alumnos = DB::select("SELECT ida,nombre,app,apm FROM alumnos WHERE grupo_id=$idgr;");
+        $ida = isset($request->ida) ? $request->ida : '';
+        $condition = (isset($request->opc) AND $request->opc==1) ? "AND ida NOT IN (SELECT alumno_id FROM valoracion_ae )" : '';
+        $condition2 = (isset($request->opc) AND $request->opc==2) ? "AND ida NOT IN (SELECT alumno_id FROM valoracion_ae WHERE alumno_id!=$ida)" : '';
+        
+        $alumnos = DB::select("SELECT ida,nombre,app,apm FROM alumnos WHERE grupo_id=$idgr $condition;");
         return $alumnos;
 
     }
@@ -199,9 +213,10 @@ class StudentsController extends Controller
     {
         
         $arraymr = array();
-
+        $grupo = '';
         if($request->estatus==1){
             $campo  = 'grupo';   
+            $grupo = 'required';
             }else if($request->estatus==2){
             $campo  = 'estatus';
             }else if($request->estatus==3){
@@ -210,6 +225,7 @@ class StudentsController extends Controller
             $campo  = 'motivoDesercion';
             }else if($request->estatus==5){
             $campo  = 'motivoReingreso';
+            $grupo = 'required';
             }
 
         $validator = $request->validate([
@@ -220,6 +236,7 @@ class StudentsController extends Controller
             'genero'  => 'required',
             'estatus'  => 'required',
             'promedio'  => 'required|numeric',
+            'grupo' => $grupo,
             $campo => 'required',
             
         ]);
@@ -237,11 +254,11 @@ class StudentsController extends Controller
             'apm'      => $request->apm,
             'matricula'    => $request->matricula,
             'genero'    => $request->genero,
-            'grupo_id' => $request->estatus==1 ? $request->grupo : null,
+            'grupo_id' => $request->estatus==1 || $request->estatus==5 ? $request->grupo : null,
             'promedio_general' => $request->promedio,
             'estatus_id' => $request->estatus,
             'motivo' => $motivo,
-            'activo' => $request->estatus==1 ? 1 : 0 
+            'activo' => $request->estatus==1 || $request->estatus==5 ? 1 : 0 
         ]);
          
         if($request->estatus==3){

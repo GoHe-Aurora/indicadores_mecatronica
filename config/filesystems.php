@@ -64,6 +64,12 @@ return [
             'url' => public_path(),
             'visibility' => 'public',
         ],
+        'evidencia_asesorias' => [
+            'driver' => 'local',
+            'root' => 'storage/evidencia_asesorias',
+            'url' => public_path(),
+            'visibility' => 'public',
+        ],
 
     ],
 
