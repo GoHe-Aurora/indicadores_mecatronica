@@ -25,48 +25,37 @@ class AsesoriasController extends Controller
     { 
         $condicion1 = '';
         $condicion2 = '';
-        $fecha = '';
+        $fecha = now()->format('Y-m-d');
         $gr = '';
         $array = array();
         if($request->fecha){
             $fecha = $request->fecha;
-            $condicion1 = "AND SUBSTRING_INDEX(asa.fecha,' ',1)='$fecha'";
         }     
         if($request->grupo){
             $gr = $request->grupo;
             $condicion2 = "WHERE a.grupo_id=$gr";
         }
-        $asesorias = DB::select("SELECT a.ida,a.nombre,a.app,a.apm,asa.observaciones,asa.tipo,SUBSTRING_INDEX(asa.fecha,' ',1) fecha,asa.idasal FROM alumnos a LEFT JOIN asesorias_alumnos asa ON a.ida=asa.idal $condicion1 $condicion2;");
+        $asesorias = DB::select("SELECT a.ida,a.nombre,a.app,a.apm,asa.observaciones,asa.tipo,SUBSTRING_INDEX(asa.fecha,' ',1) fecha,asa.idasal FROM alumnos a LEFT JOIN asesorias_alumnos asa ON a.ida=asa.idal AND SUBSTRING_INDEX(asa.fecha,' ',1)='$fecha' $condicion2;");
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
-
-        function btn($idasal,$fecha){
+        $id = DB::select("SELECT idae,evidencia FROM asesorias_evidencia WHERE SUBSTRING_INDEX(fecha,'-',2)=SUBSTRING_INDEX('$fecha','-',2)");
+        function btn($idasal){
                     $botones = '';
-                if($fecha!=''){
-                    $botones = "<a href=\"#eliminar-asesoria-\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-asesoria-$idasal')\"><i class='fas fa-power-off'></i></a>";
-                    "<a href= ". route('asesorias.edit', $idasal ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>"; 
-                }
-                      
+                    /*$botones = "<a href=\"#eliminar-asesoria-\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-asesoria-$idasal')\"><i class='fas fa-power-off'></i></a>";
+                    "<a href= ". route('asesorias.edit', $idasal ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>"; */
             return $botones;
         }
-        function obs($obs,$id,$fecha){
-                $disabled = '';
-                if($fecha==''){
-                   $obs = '';
-                   
-                }
-                if($id==''){
-                    $disabled = 'disabled';
-                }
-                $input = '<input type="text" value="'.$obs.'" data-id="'.$id.'" class="form-control obs"/><button '.$disabled.' data-id="'.$id.'" style="margin-top:5px;" class="btn btn-success save">Guardar</button>';
+        function obs($obs,$id){ 
+                
+                $input = '<input type="text" value="'.$obs.'" data-id="'.$id.'" class="form-control obs"/><button data-id="'.$id.'" style="margin-top:5px;" class="btn btn-success save">Guardar</button>';
                 
                    
             return $input;
         }
         
-        function ck($c,$id){
-            $ck = '<input type="checkbox"  data-id="'.$id.'" '.($c==1 ? 'checked' : '').' class="ck" name="academica" id="academica" value="1">
+        function ck($c,$id,$idal){
+            $ck = '<input type="checkbox" data-alumno="'.$idal.'" data-id="'.$id.'" '.($c==1 ? 'checked' : '').' class="ck" name="academica" id="academica" value="1">
 <label for="academica">Académica</label>
-<input form="myForm" type="checkbox" data-id="'.$id.'" '.($c==2 ? 'checked' : '').' class="ck" name="nivelacion" id="nivelacion"  value="2"> 
+<input form="myForm" type="checkbox" data-alumno="'.$idal.'" data-id="'.$id.'" '.($c==2 ? 'checked' : '').' class="ck" name="nivelacion" id="nivelacion"  value="2"> 
 <label for="nivelacion">Nivelación</label>';
             return $ck;
         }
@@ -77,13 +66,13 @@ class AsesoriasController extends Controller
                 'nombre'              => $asesoria->nombre,
                 'app'                 => $asesoria->app,
                 'apm'                 => $asesoria->apm,
-                'observaciones'       => obs($asesoria->observaciones,isset($asesoria->idasal) ? $asesoria->idasal : '',isset($request->fecha) ? 1 : ''),
-                'tipo'                => ck(isset($request->fecha) ? $asesoria->tipo : '',isset($asesoria->idasal) ? $asesoria->idasal : ''),
-                'operaciones'         => btn(isset($asesoria->idasal) ? $asesoria->idasal : '',isset($request->fecha) ? 1 : '')
+                'observaciones'       => obs($asesoria->observaciones,$asesoria->idasal),
+                'tipo'                => ck($asesoria->tipo,$asesoria->idasal,$asesoria->ida),
+                'operaciones'         => btn($asesoria->idasal)
             ));
         }
         $json = json_encode($array);
-        return view("asesorias.index", compact("json","asesorias","grupos","fecha","gr"));
+        return view("asesorias.index", compact("json","asesorias","grupos","fecha","gr","id"));
     }
 
     /**
@@ -133,24 +122,46 @@ class AsesoriasController extends Controller
      */
     public function update_tipo(Request $request)
     { 
-        $id = $request->id;
-        $tipo = $request->tipo;
-    
-            DB::update("UPDATE asesorias_alumnos SET tipo=$tipo WHERE idasal=$id;");
-        
-        return  json_encode('El alumno se ha actualizado exitosamente');
-            
+        if(!empty($request->id)){
+           DB::update("UPDATE asesorias_alumnos SET tipo=$request->tipo WHERE idasal=$request->id;"); 
+        }else{
+           DB::insert("INSERT INTO asesorias_alumnos (idal,tipo,fecha) VALUES($request->idal,$request->tipo,'$request->fecha');");
+        }
+        return  json_encode('El alumno se ha actualizado exitosamente');         
     }
     public function update_obs(Request $request)
     { 
-        $id = $request->id; 
-        $obs = $request->obs;
-        DB::update("UPDATE asesorias_alumnos SET observaciones='$obs' WHERE idasal=$id;");
-        return  json_encode('El alumno se ha actualizado exitosamente');
-            
+        DB::update("UPDATE asesorias_alumnos SET observaciones='$request->obs' WHERE idasal=$request->id;");
+        return json_encode('El alumno se ha actualizado exitosamente');       
     }
-    
-
+    public function update_evidencia(Request $request)
+    {
+       if(!empty($request->id)){
+         $Q = DB::select("SELECT evidencia FROM asesorias_evidencia WHERE idae=$request->id;");
+        Storage::disk('public')->delete('evidencia_asesorias/'.$Q[0]->evidencia);
+        Storage::disk('evidencia_asesorias')->delete($Q[0]->evidencia);
+        if(isset($request->file)){
+        $file = $request->file;
+        $name = time() . '.' . $file->getClientOriginalExtension();
+        //$originalName = $request->archivo->getClientOriginalName();
+        Storage::disk('evidencia_asesorias')->put($name, File::get($file));
+        Storage::disk('public')->put('evidencia_asesorias/' . $name, File::get($file));
+        }
+        DB::update("UPDATE asesorias_evidencia SET evidencia='$name',fecha='$request->fecha'");
+         $t= 'actualizado';  
+       }else{
+        if(isset($request->file)){
+        $file = $request->file;
+        $name = time() . '.' . $file->getClientOriginalExtension();
+        //$originalName = $request->archivo->getClientOriginalName();
+        Storage::disk('evidencia_asesorias')->put($name, File::get($file));
+        Storage::disk('public')->put('evidencia_asesorias/' . $name, File::get($file));
+        }
+         DB::insert("INSERT INTO asesorias_evidencia(evidencia,fecha) VALUES('$name',$request->fecha)");
+         $t= 'agregado';
+       }
+       return json_encode(array('response'=>'La evidencia se ha '.$t.' exitosamente','nfile'=>$name));       
+    }
     /**
      * Vista que muestra un formulario para editar un usuario.
      */

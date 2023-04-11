@@ -12,7 +12,7 @@ class ValoracionAE extends Model
     protected $table = 'valoracion_ae';
     protected $primaryKey = 'idv';
     protected $fillable = [
-        'alumno_id','promedio','grupo_id'
+        'alumno_id','promedio_tsu','promedio_ing','grupo_tsu','grupo_ing'
     ];
 
 }

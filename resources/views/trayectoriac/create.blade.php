@@ -30,18 +30,9 @@
             @endif
 
             <div class="row">
-                 <div class="form-group col-xs-3 col-md-6">
-                   <label for="grupo_ing">Grupo ING: <b class="text-danger">*</b></label>
-                    <select class="form-select" id="grupo_ing" name="grupo_ing">
-                        <option value="">Selección</option>
-                        @foreach($grupos as $grupo)
-                            <option value="{{ $grupo->idgr }}" {{ (old('grupo') == $grupo->idgr) ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
-                        @endforeach
-                    </select>
-                </div>  
-                <div class="form-group col-xs-3 col-md-6">
-                   <label for="grupo_tsu">Grupo TSU: <b class="text-danger">*</b></label>
-                    <select class="form-select" id="grupo_tsu" name="grupo_tsu">
+                 <div class="form-group grupo col-xs-3 col-md-6">
+                   <label for="grupo">Grupo: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="grupo" name="grupo">
                         <option value="">Selección</option>
                         @foreach($grupos as $grupo)
                             <option value="{{ $grupo->idgr }}" {{ (old('grupo') == $grupo->idgr) ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
@@ -49,9 +40,6 @@
                     </select>
                 </div>    
 
-            </div>
-            
-            <div class="row">
                 <div class="col-md-6 col-xs-3 pb-3">
                     <label for="alumno">Alumno: <b class="text-danger">*</b></label>
                     <select class="form-select" id="alumno" name="alumno">
@@ -60,16 +48,13 @@
                     </select>
                     
                 </div>
-                <div class="form-group col-xs-3 col-md-6">
-                     <label for="promedio_ing">Promedio TSU: <b class="text-danger">*</b></label>
-                    <input type="number" class="form-control" id="promedio_tsu" name="promedio" value="{{ old('promedio_tsu') }}" step="0.01" min="0" max="10" placeholder="Ingresa un promedio" required>
-
-                </div>
             </div>
+            
             <div class="row">
+                
                 <div class="form-group col-xs-3 col-md-6">
-                     <label for="promedio_tsu">Promedio ING: <b class="text-danger">*</b></label>
-                    <input type="number" class="form-control" id="promedio_ing" name="promedio" value="{{ old('promedio_ing') }}" step="0.01" min="0" max="10" placeholder="Ingresa un promedio" required>
+                     <label for="promedio">Promedio: <b class="text-danger">*</b></label>
+                    <input type="number" class="form-control" id="promedio" name="promedio" value="{{ old('promedio') }}" step="0.01" min="0" max="10" placeholder="Ingresa un promedio" required>
 
                 </div>
             </div>
@@ -83,7 +68,8 @@
 </div>
 <script type="text/javascript">
     $( document ).ready(function() {
-    $('#grupo_ing').change(function(){
+    
+    $('#grupo').change(function(){
                 $("#alumno").find('option').not(':first').remove();
                 if($(this).val()!=''){
                     studentsByGroup($(this).val(),1);

@@ -230,6 +230,23 @@
             </ul>
           </li>
           @endif
+          @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+             <i class="fas fa-check"></i>
+              <p>Trayectoria Cuatri.</p>
+              <i class="fas fa-angle-left right"></i>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                      <a href="{{ url('/trayectoriac') }}" class="nav-link">
+                      <i class="fas fa-list"></i>
+                      <p>Lista</p>
+                      </a>
+                    </li>
+            </ul>
+          </li>
+          @endif
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="fas fa-chart-pie"></i>

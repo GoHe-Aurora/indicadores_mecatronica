@@ -16,6 +16,7 @@ use App\Http\Controllers\Students\StudentsController;
 use App\Http\Controllers\Asesorias\AsesoriasController;
 use App\Http\Controllers\Tutorias\TutoriasController;
 use App\Http\Controllers\ValoracionAE\ValoracionAEController;
+use App\Http\Controllers\TrayectoriaC\TrayectoriaCController;
 
 //////////// RUTAS PARA LA PARTE INICIAL DEL SISTEMA. ///////////////
 
@@ -71,7 +72,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('students', StudentsController::class, ['names' => 'students']);
     Route::post('asesorias/update_tipo', [AsesoriasController::class,'update_tipo'])->name('asesorias.update_tipo');
     Route::post('asesorias/update_obs', [AsesoriasController::class,'update_obs'])->name('asesorias.update_obs');
+    Route::post('asesorias/update_evidencia', [AsesoriasController::class,'update_evidencia'])->name('asesorias.update_evidencia');
     Route::resource('asesorias', AsesoriasController::class, ['names' => 'asesorias']);
+    Route::resource('trayectoriac', TrayectoriaCController::class, ['names' => 'trayectoriac']);
     Route::get('tutorias/delete/{id}', [TutoriasController::class,'delete'])->name('tutorias.delete');
     Route::resource('tutorias', TutoriasController::class, ['names' => 'tutorias']);
     Route::get('valoracion_ae/delete/{id}', [ValoracionAEController::class,'delete'])->name('valoracion_ae.delete');

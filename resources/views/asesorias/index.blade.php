@@ -27,19 +27,19 @@
                 @csrf
                 @method('GET')
             <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <label for="">Grupo: <strong style="color: red;">*</strong></label>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <label for="">Fecha: <strong style="color: red;">*</strong></label>
             </div>
 
-            <div class="col-sm-4">
-                
+            <div class="col-sm-3">
+                <label for="">Evidencia: </label>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <select class="form-control" name="grupo">
                     <option value="" >Selección</option>
                         @foreach($grupos as $grupo)
@@ -55,13 +55,20 @@
             </button-->
                 <!--a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('asesorias.create')}}"><i class="fas fa-user-plus"></i></a-->
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <input required name="fecha" value="{{$fecha}}" class="form-control fecha" type="date">      
 
             </div>
-            <div class="col-sm-4">
-               <a href="#">Evidencia</a>
+            <div class="col-sm-3">
+               <input type="file" class="form-control evidencia">
+               
          </div>
+         <div class="col-sm-3">
+              <!--a type="button" class="btn btn-primary mt-1" href="{{ route('asesorias.update_evidencia')}}"> Guardar</a--> 
+               <a class="upload_e" href="#">Subir Evidencia</a>
+               <!--button type="submit" class="btn btn-primary upload_e">Subir</button-->
+               <a data-id="{{isset($id[0]) ? $id[0]->idae : ''}}" class="download_e" style="margin-left: 10px;" href="{{isset($id[0]) ? './storage/evidencia_asesorias/'.$id[0]->evidencia : ''}}" target="_blank">Descargar Evidencia</a>
+         </div>   
         </form>
         </div>
         </div>
@@ -104,12 +111,11 @@
      @endforeach--}}
      <script type="text/javascript">
         $( document ).ready(function() {
-        
-         $('.obs').click(function() {
+         $('.obs').click(function(){
             $(this).focus();
          })
          $('.save').click(function() {
-            obs($(this).prev().data('id'),$(this).prev().val());
+               obs($(this).prev().data('id'),$(this).prev().val()); 
          })
         $('.ck').change(function() {
             del = false;
@@ -118,25 +124,31 @@
                     $(".ck[value='2']").prop('checked', false); 
                 }else if($(this).attr('value')==2){
                     $(".ck[value='1']").prop('checked', false); 
-                }
-                  
-                $(".save[data-id='"+$(this).data('id')+"']").prop('disabled', false); 
-                ck($(this).attr('value'),$(this).data('id'));
+                } 
+                ck($(this).attr('value'),$(this).data('id'),$(this).data('alumno'),$('.fecha').val());
             }else{
                 alert('Debes de seleccionar una fecha !!');
                 $(this).prop('checked', false); 
             }
             
         })
-        function ck(tipo,id){
+         $('.upload_e').click(function() {
+            if($('.evidencia').prop("files")[0]){
+              upload_e($('.download_e').data('id'),$('.evidencia').prop("files")[0],$('.fecha').val());  
+          }else{
+             alert('Debes de seleccionar un archivo !!');
+          }
+            
+         })
+        function ck(tipo,id,idal,fecha){
             $.ajaxSetup({
              headers: {
                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
              }
          });
             $.ajax({
-               url:'/asesorias/update_tipo',
-               data:{'id':id,'tipo':tipo},
+               url:'/asesorias/update_evidencia',
+               data:{'id':id,'tipo':tipo,'idal':idal,fecha:fecha},
                type:'post',
                success:  function (response) {
                    alert(response);
@@ -156,6 +168,31 @@
                type:'post',
                success:  function (response) {
                    alert(response);   
+               },
+               
+             });
+        }
+        function upload_e(id,file,fecha){
+            $.ajaxSetup({
+             headers: {
+                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+             }
+         });
+            var fd = new FormData();
+            fd.append('id',id);
+            fd.append('file',file);
+            //fd.append('_token',CSRF_TOKEN);
+            fd.append('fecha',fecha);
+            $.ajax({
+               url:'/asesorias/update_evidencia',
+               data:/*{'id':id,'file':file,'fecha':fecha}*/fd,
+               type:'post',
+               contentType: false,
+               processData: false,
+               dataType: 'json',
+               success:  function (data) {
+                   $('.download_e').attr('href','./storage/evidencia_asesorias/'+data.nfile)
+                   alert(data.response);
                },
                
              });

@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\ValoracionAE;
+namespace App\Http\Controllers\TrayectoriaC;
 
 use File;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TiposUsuarios;
-use App\Models\ValoracionAE;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
-class ValoracionAEController extends Controller
+class TrayectoriaCController extends Controller
 {
     /**
      * Vista para mostrar un listado de alumnos.
@@ -23,38 +22,36 @@ class ValoracionAEController extends Controller
     public function index(Request $request)
     {
         $grupo_id = '';
-        $condition = '';
         if($request->grupo){
             $grupo_id = $request->grupo;
-            $condition = "WHERE g.idgr=$grupo_id";
         }
         $array = array();
-        $alumnos = DB::select("SELECT v.*,a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,g.idgr FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON a.grupo_id=g.idgr $condition;");
-        $grupos_tsu = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id<7;");
-        $grupos_ing = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id>=7;");
-        function btn($idv){
+        $alumnos = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,mu.unidad FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida INNER JOIN materias_unidad mu ON tc.unidad_id=mu.idmu WHERE mu.materia_id=1 AND a.grupo_id=1;");
+        $grupos = DB::select("SELECT idgr,nombre,descripcion FROM grupos;");
+        $materias = DB::select("SELECT idm,nombre FROM materias;");
+        function btn($idtc){
            
-                $botones = "<a href=\"#eliminar-vae\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-vae-$idv')\"><i class='fas fa-power-off'></i></a>"
-                         . "<a href= ". route('valoracion_ae.edit', $idv ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>";
+                $botones = "<a href=\"#eliminar-tc\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-tc-$idtc')\"><i class='fas fa-power-off'></i></a>"
+                         . "<a href= ". route('trayectoriac.edit', $idtc ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>";
                 
             return $botones;
         }
         foreach ($alumnos as $alumno){
 
             array_push($array, array(
-                'idv'                 => $alumno->idv,
+                'idtc'                => $alumno->idtc,
                 'nombre'              => $alumno->nombre,
                 'app'                 => $alumno->app,
                 'apm'                 => $alumno->apm,
-                'grupo_tsu'           => $alumno->grupo_tsu,
-                'grupo_ing'           => $alumno->grupo_ing,
-                'promedio_tsu'        => $alumno->promedio_tsu,
-                'promedio_ing'        => $alumno->promedio_ing,
-                'operaciones'         => btn($alumno->idv)
+                'unidad'              => $alumno->unidad,
+                'actitud'             => $alumno->actitud,
+                'conocimiento'        => $alumno->conocimiento,
+                'desempeno'           => $alumno->desempeno,
+                'operaciones'         => btn($alumno->idtc)
             ));
         }
         $json = json_encode($array);
-        return view("valoracion_ae.index", compact("json","alumnos","grupos_tsu","grupos_ing","grupo_id"));
+        return view("trayectoriac.index", compact("json","alumnos","grupos","materias"));
     }
 
     /**
@@ -76,18 +73,16 @@ class ValoracionAEController extends Controller
 
         $validator = $request->validate([
             'alumno' => 'required',
-            'promedio_tsu'  => 'required|numeric',
-            'promedio_ing'  => 'required|numeric',
+            'promedio'  => 'required|numeric',
             'grupo' => 'required', 
         ]);
         
         ValoracionAE::create([
             'alumno_id' => $request->alumno,
-            'promedio_tsu' => $request->promedio_tsu,
-            'promedio_ing' => $request->promedio_ing,
-            'grupo_tsu' => isset($request->grupo_tsu) ? $request->grupo_tsu : null,
-            'grupo_ing' => isset($request->grupo_ing) ? $request->grupo_ing : null
+            'promedio' => $request->promedio,
+            'grupo_id' => $request->grupo,
         ]);
+         
         return redirect()->route('valoracion_ae.index')->with('mensaje', 'El registro se ha guardado exitosamente');
     }
 
