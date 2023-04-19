@@ -23,15 +23,16 @@
                     <a href="{{url('students/create')}}"><button class="btn btn-success"><i class="fas fa-user-alt"></i></button></a>
                 </div>
             </div-->
+            <input type="hidden" class="unidad" value="{{$length}}">
             <form  action="{{ route('trayectoriac.index') }}" method="GET">
                 @csrf
                 @method('GET')
             <div class="row">
             <div class="col-sm-4">
-                <label for="">Grupo: <strong style="color: red;">*</strong></label>
+                <label for="">Grupo: <strong style="color: red;"></strong></label>
             </div>
             <div class="col-sm-4">
-    
+                <label for="">Materia: <strong style="color: red;">*</strong></label>
             </div>
 
             <div class="col-sm-4">
@@ -43,7 +44,7 @@
                 <select class="form-control" name="grupo" id="grupo">
                     <option value="">Selecciona una opción</option>
                 @foreach($grupos as $grupo)
-                            <option value="{{ $grupo->idgr }}" {{-- $grupo->idgr==$grupo_id ? 'selected' : '' --}}>{{ $grupo->nombre }}</option>
+                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
                         @endforeach
                 </select>  
                 <br>
@@ -56,11 +57,15 @@
                 <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('trayectoriac.create')}}"><i class="fas fa-user-plus"></i></a>
             </div>
             <div class="col-sm-4">
-                    
-
+                 <select class="form-control" name="materia" id="materia">
+                    <option value="">Selecciona una opción</option>
+                @foreach($materias as $materia)
+                    <option value="{{ $materia->idm }}" {{ $materia->idm==$mat ? 'selected' : '' }}>{{ $materia->nombre }} {{ $materia->descripcion }}</option>
+                @endforeach
+                </select>   
             </div>
             <div class="col-sm-4">
-               
+               <a class="reporte" href="#">Reporte
          </div>
         </form>
         </div>
@@ -68,7 +73,6 @@
     </div>
 
      <div class="card-body">
-     
     	<zing-grid
         	lang="custom"
         	caption='Valoración de Aprovechamiento Escolar'
@@ -83,32 +87,63 @@
         	id='zing-grid'
         	filter
             selector
-            data="{{ $json }}">
-        	<!--zg-colgroup-->
-                <zg-column index='nombre' header='Nombre'  type='text'></zg-column>
-                <zg-column index='app' header='Apellido Paterno'  type='text'></zg-column>
-                <zg-column index='apm' header='Apellido Materno'  type='text'></zg-column>
-                {{--@foreach ($alumnos as $alumno)--}}
-                 @for ($i = 0; $i < 3; $i++)
-                <zg-column index='actitud' header='Actitud'  type='text'></zg-column>
-                <zg-column index='conocimiento' header='Conocimiento'  type='text'></zg-column>
-                <zg-column index='desempeno' header='Desempeño'  type='text'></zg-column>
-                @endfor
-                {{--@endforeach--}}
+            data="{{ $json }}">     
+                <zg-column index='nombre' header='Nombre' type='text'></zg-column>
+                <zg-column index='app' header='Apellido Paterno' type='text'></zg-column>
+                <zg-column index='apm' header='Apellido Materno' type='text'></zg-column>
+                <script>
+                 for (var i = 1; i <= $('.unidad').val(); i++) {
+                $('zg-column:last').after("<zg-column index='' header='Unidad "+i+"' type='text'></zg-column><zg-column index='actitud"+i+"' header='Actitud' type='text'></zg-column><zg-column index='conocimiento"+i+"' header='Conocimiento' type='text'></zg-column><zg-column index='desempeno"+i+"' header='Desempeño' type='text'></zg-column><zg-column index='calificacion"+i+"' header='Calificación' type='text'></zg-column>");   
+                }  
+                </script>
                 <zg-column align="center" filter ="disabled" index='operaciones' header='Operaciones' type='text'></zg-column>
-                
-        	<!--/zg-colgroup-->
+        	
     	</zing-grid>
 
 	</div>
     @foreach ($alumnos as $alumno)
-    <form id="eliminar-tc-{{ $alumno->idtc }}" class="ocultar" action="{{-- route('trayectoriac.delete',$alumno->idtc) --}}" method="GET">
+    <form id="eliminar-tc-{{-- $alumno->idtc --}}" class="ocultar" action="{{-- route('trayectoriac.delete',$alumno->idtc) --}}" method="GET">
         @csrf
         @method('DELETE')
     </form>
      @endforeach
      <script type="text/javascript">
-        
+        $('.reporte').click(function(e){
+            e.preventDefault();
+            if($('#grupo').val()!='' && $('#materia').val()!=''){
+               reporte_pdf($('#grupo').val(), $('#materia').val());
+            }else if($('#grupo').val()==''){
+               alert("Selecciona un grupo");
+            }else if($('#materia').val()==''){
+               alert("Selecciona una materia");
+            }
+        })
+        function reporte_pdf(grupo,materia){
+            $.ajaxSetup({
+             headers: {
+                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+             }
+         });
+            $.ajax({
+               url:'/trayectoriac/reporte_pdf',
+               data:{'grupo':grupo,'materia':materia},
+               type:'post',
+               xhrFields: {
+                responseType: 'blob'
+            },
+            success: function(response){
+               var blob = new Blob([response]);
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "Trayectoria_Cuatrimestral_"+materia+"_"+grupo+".xlsx";
+                link.click();
+            },
+            error: function(blob){
+                console.log(blob);
+            }
+               
+             });
+        }
      </script>
 
 @endif

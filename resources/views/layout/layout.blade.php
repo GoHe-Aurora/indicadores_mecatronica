@@ -34,7 +34,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
-
   @yield('header')
 </head>
 <body class="hold-transition skin-yellow sidebar-mini">
@@ -144,21 +143,18 @@
                     <p>Usuarios</p>
                     </a>
                 </li>
-
+                <li class="nav-item">
+                    <a href="{{ url('asig_grupos_ptc')}}" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <p>Asig de grupos PTC</p>
+                    </a>
+                </li>
                 <!--li class="nav-item">
                     <a href="{{ url('areas')}}" class="nav-link">
                     <i class="fas fa-chart-area"></i>
                     <p>Áreas</p>
                     </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="{{ url('tipos-actividades')}}" class="nav-link">
-                    <i class="fas fa-layer-group"></i>
-                    <p>Tipos de actividades</p>
-                    </a>
                 </li-->
-
             </ul>
           </li>
         @endif
@@ -247,13 +243,13 @@
             </ul>
           </li>
           @endif
-          <li class="nav-item has-treeview">
+          <!--li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="fas fa-chart-pie"></i>
               <p>Gr&aacute;ficas</p>
               <i class="fas fa-angle-left right"></i>
             </a>
-            <ul class="nav nav-treeview">
+            <ul class="nav nav-treeview"-->
               @if (auth()->user()->idtu_tipos_usuarios == 1 || auth()->user()->idtu_tipos_usuarios == 3)
                 <!--li class="nav-item">
                     <a href="{{ url('admin/dashboard')}}" class="nav-link">

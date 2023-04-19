@@ -66,7 +66,55 @@
                     </div>
                     @endif
                     @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
-               <div data-route="#" class="card col-lg-4 col-sm-12"
+                    <div data-route="#" class="card col-lg-4 col-sm-12"
+                        style="background-color: #0664c4; cursor: pointer;"
+                        id=""
+                    >
+                        <div class="card-body alumnos text-white">
+                            <div class="row text-center">
+                                <div class="col-lg-4 col-sm-12 mt-4">
+                                    <i class="fa fa-users" style="font-size: 80px"></i>
+                                </div>
+                                <div class="col-lg-8 col-sm-12">
+                                    <div class="mt-3">
+                                        <h5>Alumnos</h5>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h2>{{----}}</h2>
+                                    </div>
+                                    <h2></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+ @endif
+
+                </div>
+              
+               <div class="card-deck mb-4">
+                <div data-route="#" class="card col-lg-4 col-sm-12"
+                        style="background-color: #0664c4; cursor: pointer;"
+                        id=""
+                    >
+                        <div class="card-body tutorias text-white">
+                            <div class="row text-center">
+                                <div class="col-lg-4 col-sm-12 mt-4">
+                                    <i class="fa fa-users" style="font-size: 80px"></i>
+                                </div>
+                                <div class="col-lg-8 col-sm-12">
+                                    <div class="mt-3">
+                                        <h5>TUTORÍAS</h5>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h2>{{----}}</h2>
+                                    </div>
+                                    <h2></h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-route="#" class="card col-lg-4 col-sm-12"
                         style="background-color: #00b29a; cursor: pointer;"
                         id=""
                     >
@@ -89,35 +137,8 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
- @endif
-
-                </div>
-              
-               <div class="card-deck mb-4">
-
-                    <div data-route="#" class="card col-lg-4 col-sm-12"
-                        style="background-color: #0664c4; cursor: pointer;"
-                        id=""
-                    >
-                        <div class="card-body tutorias text-white">
-                            <div class="row text-center">
-                                <div class="col-lg-4 col-sm-12 mt-4">
-                                    <i class="fa fa-users" style="font-size: 80px"></i>
-                                </div>
-                                <div class="col-lg-8 col-sm-12">
-                                    <div class="mt-3">
-                                        <h5>TUTORÍAS</h5>
-                                    </div>
-                                    <div class="mt-3">
-                                        <h2>{{----}}</h2>
-                                    </div>
-                                    <h2></h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+               
+                    
                     @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
                     <div data-route="#" class="card col-lg-4 col-sm-12"
                         style="background-color: #00b29a; cursor: pointer;"
@@ -143,35 +164,11 @@
                         </div>
                     </div>
                     @endif
-                    {{--@if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)--}}
-               <!--div data-route="#" class="card col-lg-4 col-sm-12"
-                        style="background-color: #00b29a; cursor: pointer;"
-                        id=""
-                    >
-                        <div class="card-body text-white">
-                            <div class="row text-center">
-                                <div class="col-lg-4 col-sm-12 mt-4">
-                                    <i class="fa fa-school" style="font-size: 80px"></i>
-                                </div>
-                                <div class="col-lg-8 col-sm-12">
-                                    <div class="mt-3">
-                                        <h5>
-                                          APROVECHAMIENTO ESCOLAR
-                                        </h5>
-                                    </div>
-                                    <div class="mt-3">
-                                        <h2>{{----}}</h2>
-                                    </div>
-                                    <h2></h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div-->
-
- {{--@endif--}}
- @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
-               <div data-route="#" class="card col-lg-4 col-sm-12"
+                
+                </div>
+                <div class="card-deck mb-4">
+                @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+                <div data-route="#" class="card col-lg-4 col-sm-12"
                         style="background-color: #00b29a; cursor: pointer;"
                         id=""
                     >
@@ -195,10 +192,11 @@
                         </div>
                     </div>
                 </div>
+                
 
  @endif
-                </div>
-               
+
+             </div>  
 
             </div>
         </div>

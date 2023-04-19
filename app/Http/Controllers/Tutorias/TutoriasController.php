@@ -120,7 +120,7 @@ class TutoriasController extends Controller
     public function edit($idt)
     {
         $tutoria = DB::select("SELECT t.idt,t.maestro_id,t.tipo,t.fecha,t.archivo,t.archivo_nombre,t.grupo_id,t.alumno_id FROM users u INNER JOIN tutorias t ON u.idu = t.maestro_id AND (u.idtu_tipos_usuarios=2 OR u.idtu_tipos_usuarios=3) WHERE t.idt=$idt;");   
-        $maestros = DB::select("SELECT idu,nombre,app,apm FROM users WHERE u.idtu_tipos_usuarios=2 OR u.idtu_tipos_usuarios=3;"); 
+        $maestros = DB::select("SELECT idu,nombre,app,apm FROM users WHERE idtu_tipos_usuarios=2 OR idtu_tipos_usuarios=3;"); 
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;");  
             return view( 'tutorias.edit', compact('tutoria','maestros','grupos'));
     }

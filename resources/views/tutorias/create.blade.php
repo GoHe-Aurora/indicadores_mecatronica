@@ -27,7 +27,7 @@
                     <select class="form-select" id="maestro" name="maestro">
                         <option value="">Selección</option>
                         @foreach($maestros as $maestro)
-                            <option value="{{ $maestro->idm }}" {{ (old('maestro') == $maestro->idm) ? 'selected' : '' }}>{{$maestro->nombre}} {{$maestro->app}} {{$maestro->apm}}</option>
+                            <option value="{{ $maestro->idu }}" {{ (old('maestro') == $maestro->idu) ? 'selected' : '' }}>{{$maestro->nombre}} {{$maestro->app}} {{$maestro->apm}}</option>
                         @endforeach
                     </select>
                     

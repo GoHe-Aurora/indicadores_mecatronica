@@ -3,16 +3,20 @@
 namespace App\Http\Controllers\TrayectoriaC;
 
 use File;
+use PDF;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TiposUsuarios;
+use App\Models\TrayectoriaC;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use App\Exports\TrayectoriaCExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TrayectoriaCController extends Controller
 {
@@ -21,14 +25,64 @@ class TrayectoriaCController extends Controller
      */
     public function index(Request $request)
     {
-        $grupo_id = '';
+        $grupo_id = 1;
+        $mat = 1;
         if($request->grupo){
             $grupo_id = $request->grupo;
         }
+        if($request->materia){
+            $mat = $request->materia;
+        }
         $array = array();
-        $alumnos = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,mu.unidad FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida INNER JOIN materias_unidad mu ON tc.unidad_id=mu.idmu WHERE mu.materia_id=1 AND a.grupo_id=1;");
+        $ACTITUD= '';
+        $CONOCIMIENTO= '';
+        $DESEMPENO = '';
+        $CALIFICACION = '';
+        $unidades = DB::select("SELECT unidades FROM materias WHERE idm=$mat;");
+        $length = $unidades[0]->unidades;
+        $c = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,tc.unidad FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$mat AND a.grupo_id=$grupo_id;");
+        if(isset($c[0])){
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $ACTITUD .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.actitud END) AS actitud".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $CONOCIMIENTO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.conocimiento END) AS conocimiento".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $DESEMPENO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.desempeno END) AS desempeno".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $CALIFICACION .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.calificacion END) AS calificacion".$i.$coma;
+        }
+        }else{
+            $ACTITUD = "tc.idtc";
+            $CONOCIMIENTO = "tc.idtc";
+            $DESEMPENO = "tc.idtc";
+            $CALIFICACION = "tc.idtc";
+        }
+        $alumnos = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,tc.unidad,$ACTITUD,$CONOCIMIENTO,$DESEMPENO,$CALIFICACION FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$mat;");
         $grupos = DB::select("SELECT idgr,nombre,descripcion FROM grupos;");
-        $materias = DB::select("SELECT idm,nombre FROM materias;");
+        $materias = DB::select("SELECT idm,nombre,descripcion FROM materias WHERE unidades IS NOT NULL;");
         function btn($idtc){
            
                 $botones = "<a href=\"#eliminar-tc\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-tc-$idtc')\"><i class='fas fa-power-off'></i></a>"
@@ -37,21 +91,34 @@ class TrayectoriaCController extends Controller
             return $botones;
         }
         foreach ($alumnos as $alumno){
-
-            array_push($array, array(
+             
+            array_push($array, [
                 'idtc'                => $alumno->idtc,
                 'nombre'              => $alumno->nombre,
                 'app'                 => $alumno->app,
                 'apm'                 => $alumno->apm,
-                'unidad'              => $alumno->unidad,
-                'actitud'             => $alumno->actitud,
-                'conocimiento'        => $alumno->conocimiento,
-                'desempeno'           => $alumno->desempeno,
                 'operaciones'         => btn($alumno->idtc)
-            ));
+            ]);
+          
         }
-        $json = json_encode($array);
-        return view("trayectoriac.index", compact("json","alumnos","grupos","materias"));
+        $arr = array();
+        if(isset($array[0])){
+        for ($i = 1; $i <= $length; $i++) {
+            $actitud = 'actitud'.$i;
+            $arr['actitud'.$i] = $alumnos[0]->$actitud!=null ?  $alumnos[0]->$actitud : 'SIN ASIGNAR';
+            $conocimiento = 'actitud'.$i;
+            $arr['conocimiento'.$i] = $alumnos[0]->$conocimiento!=null ? $alumnos[0]->$conocimiento : 'SIN ASIGNAR';;
+            $desempeno = 'desempeno'.$i;
+            $arr['desempeno'.$i] = $alumnos[0]->$desempeno!=null ? $alumnos[0]->$desempeno : 'SIN ASIGNAR';
+            $calificacion = 'calificacion'.$i;
+            $arr['calificacion'.$i] = $alumnos[0]->$calificacion!=null ? $alumnos[0]->$calificacion : 'SIN ASIGNAR';
+        }
+        }
+        if(isset($array[0])){
+           $arr = array_merge($array[0],$arr);
+        }
+        $json = json_encode(array($arr));
+        return view("trayectoriac.index", compact("length","mat","grupo_id","alumnos","grupos","materias","json"));
     }
 
     /**
@@ -60,9 +127,8 @@ class TrayectoriaCController extends Controller
     public function create()
     {
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
-
-        return view( 'valoracion_ae.create', compact('grupos'));
-
+        $materias = DB::select("SELECT idm,nombre,descripcion FROM materias WHERE unidades IS NOT NULL;");
+        return view( 'trayectoriac.create', compact('grupos','materias'));
     }
 
     /**
@@ -73,50 +139,192 @@ class TrayectoriaCController extends Controller
 
         $validator = $request->validate([
             'alumno' => 'required',
-            'promedio'  => 'required|numeric',
-            'grupo' => 'required', 
+            'grupo'  => 'required',
+            'materia' => 'required', 
+            'unidad' => 'required', 
+            'actitud' => 'required|numeric', 
+            'conocimiento' => 'required|numeric', 
+            'desempeno' => 'required|numeric', 
+            //'calificacion' => 'required|numeric',
         ]);
-        
-        ValoracionAE::create([
+        $c = ($request->actitud+$request->conocimiento+$request->desempeno)/3;
+        $calif = number_format((float)$c, 2, '.', '');
+        TrayectoriaC::create([
             'alumno_id' => $request->alumno,
-            'promedio' => $request->promedio,
-            'grupo_id' => $request->grupo,
+            'materia_id' => $request->materia,
+            'unidad' => $request->unidad,
+            'actitud' => $request->actitud,
+            'conocimiento' => $request->conocimiento,
+            'desempeno' => $request->desempeno,
+            'calificacion' => $calif
         ]);
          
-        return redirect()->route('valoracion_ae.index')->with('mensaje', 'El registro se ha guardado exitosamente');
+        return redirect()->route('trayectoriac.index')->with('mensaje', 'El registro se ha guardado exitosamente');
     }
 
-    public function edit($idv)
+    public function edit($idtc)
     {
-        $alumno = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,g.idgr FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON a.grupo_id=g.idgr WHERE v.idv=$idv;");  
+        $tc = DB::select("SELECT * FROM trayectoria_cuatrimestral WHERE idtc=$idtc;");  
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
+        $materias = DB::select("SELECT idm,nombre,descripcion FROM materias WHERE unidades IS NOT NULL;");
         
-        return view('valoracion_ae.edit', compact('alumno','grupos'));
+        return view('trayectoriac.edit', compact('tc','grupos','materias'));
     }
-
+    public function unidades(Request $request)
+    {
+        $array = array(); 
+        $unidades = DB::select("SELECT unidades FROM materias WHERE idm=$request->materia;");
+        $unidades_asig = DB::select("SELECT unidad FROM trayectoria_cuatrimestral WHERE materia_id=$request->materia;");
+        for ($i = 1; $i <= $unidades[0]->unidades; $i++) {
+            if(!isset($unidades_asig[$i-1]) || $i==$request->unidad){
+               array_push($array,$i);  
+            }     
+        }
+        return json_encode($array);
+    }
     /**
      * Actualiza un usuario.
      */
-    public function update(Request $request, $idv)
+    public function update(Request $request, $idtc)
     {
         $validator = $request->validate([
             'alumno' => 'required',
-            'promedio'  => 'required|numeric',
-            'grupo' => 'required', 
+            'grupo'  => 'required',
+            'materia' => 'required', 
+            'unidad' => 'required', 
+            'actitud' => 'required|numeric', 
+            'conocimiento' => 'required|numeric', 
+            'desempeno' => 'required|numeric', 
+            //'calificacion' => 'required|numeric',
         ]);
-        ValoracionAE::where('idv',$idv)->update([
+        $c = ($request->actitud+$request->conocimiento+$request->desempeno)/3;
+        $calif = number_format((float)$c, 2, '.', '');
+        TrayectoriaC::where('idtc',$idtc)->update([
             'alumno_id' => $request->alumno,
-            'promedio' => $request->promedio,
-            'grupo_id' => $request->grupo,
+            'materia_id' => $request->materia,
+            'unidad' => $request->unidad,
+            'actitud' => $request->actitud,
+            'conocimiento' => $request->conocimiento,
+            'desempeno' => $request->desempeno,
+            'calificacion' => $calif
         ]);
                 
-                return redirect()->route('valoracion_ae.index')->with('mensaje', 'El registro se ha actualizado exitosamente');
+                return redirect()->route('trayectoriac.index')->with('mensaje', 'El registro se ha actualizado exitosamente');
             
     }
-
-    public function delete($idv)
+    public function reporte($idm)
     {
-        DB::delete("DELETE FROM valoracion_ae WHERE idv=$idv;"); 
+        $array = array();
+        $ACTITUD= '';
+        $CONOCIMIENTO= '';
+        $DESEMPENO = '';
+        $CALIFICACION = '';
+        $unidades = DB::select("SELECT unidades FROM materias WHERE idm=$idm;");
+        $length = $unidades[0]->unidades;
+        $c = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,tc.unidad FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$idm AND a.grupo_id=$idm;");
+        if(isset($c[0])){
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $ACTITUD .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.actitud END) AS actitud".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $CONOCIMIENTO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.conocimiento END) AS conocimiento".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $DESEMPENO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.desempeno END) AS desempeno".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $CALIFICACION .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.calificacion END) AS calificacion".$i.$coma;
+        }
+        }else{
+            $ACTITUD = "tc.idtc";
+            $CONOCIMIENTO = "tc.idtc";
+            $DESEMPENO = "tc.idtc";
+            $CALIFICACION = "tc.idtc";
+        }
+     $materia = DB::select("SELECT nombre, descripcion FROM materias WHERE idm=$idm");
+     $grupo = DB::select("SELECT nombre FROM grupos WHERE idgr=$idm");   
+     $alumnos = DB::select("SELECT tc.idtc,a.nombre,a.app,a.apm,tc.unidad,a.matricula,$ACTITUD,$CONOCIMIENTO,$DESEMPENO,$CALIFICACION FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$idm;");   
+
+    return view('trayectoriac.reporte_pdf', compact('alumnos','length','materia','grupo'));
+    }
+    public function reporte_pdf(Request $request)
+    {
+    $array = array();
+        $ACTITUD= '';
+        $CONOCIMIENTO= '';
+        $DESEMPENO = '';
+        $CALIFICACION = '';
+        $unidades = DB::select("SELECT unidades FROM materias WHERE idm=$request->materia;");
+        $length = $unidades[0]->unidades;
+        $c = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,tc.unidad FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$request->materia ;");
+        if(isset($c[0])){
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $ACTITUD .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.actitud END) AS actitud".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $CONOCIMIENTO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.conocimiento END) AS conocimiento".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $DESEMPENO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.desempeno END) AS desempeno".$i.$coma;
+        }
+        for ($i = 1; $i <= $length; $i++) {
+            if($i==$length){
+                $coma = '';
+            }else{
+                $coma = ',';
+            }
+            $CALIFICACION .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.calificacion END) AS calificacion".$i.$coma;
+        }
+        }else{
+            $ACTITUD = "tc.idtc";
+            $CONOCIMIENTO = "tc.idtc";
+            $DESEMPENO = "tc.idtc";
+            $CALIFICACION = "tc.idtc";
+        }
+     $materia = DB::select("SELECT nombre, descripcion FROM materias WHERE idm=$request->materia");
+     $grupo = DB::select("SELECT nombre FROM grupos WHERE idgr=$request->grupo");   
+     $alumnos = DB::select("SELECT tc.idtc,a.nombre,a.app,a.apm,tc.unidad,a.matricula,$ACTITUD,$CONOCIMIENTO,$DESEMPENO,$CALIFICACION FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$request->materia;"); 
+         
+    return Excel::download(new TrayectoriaCExport($materia,$grupo,$alumnos,$length), 'products.xlsx');
+    }
+    public function delete($idtc)
+    {
+        DB::delete("DELETE FROM trayectoria_cuatrimestral WHERE idtc=$idtc;"); 
         return back()->with('mensaje', 'Registro eliminado exitosamente');
     }
 

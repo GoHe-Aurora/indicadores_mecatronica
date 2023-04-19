@@ -156,8 +156,9 @@ class AsesoriasController extends Controller
         //$originalName = $request->archivo->getClientOriginalName();
         Storage::disk('evidencia_asesorias')->put($name, File::get($file));
         Storage::disk('public')->put('evidencia_asesorias/' . $name, File::get($file));
+        DB::insert("INSERT INTO asesorias_evidencia(evidencia,fecha) VALUES('$name',$request->fecha)");
         }
-         DB::insert("INSERT INTO asesorias_evidencia(evidencia,fecha) VALUES('$name',$request->fecha)");
+         
          $t= 'agregado';
        }
        return json_encode(array('response'=>'La evidencia se ha '.$t.' exitosamente','nfile'=>$name));       

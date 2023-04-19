@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Students;
 use File;
 use App\Http\Controllers\Controller;
 use App\Models\Student;
-use App\Models\materiasReprobadas;
+use App\Models\MateriasReprobadas;
+use App\Models\AlumnosGrupos;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TiposUsuarios;
@@ -147,7 +148,12 @@ class StudentsController extends Controller
             'motivo' => $motivo,
             'activo' => $request->estatus==1 || $request->estatus==5 ? 1 : 0 
         ])->ida;
-         
+        if($request->estatus==1 || $request->estatus==5){
+        AlumnosGrupos::create([
+            'alumno_id'   => $student_id,
+            'grupo_id'      => $request->grupo,
+        ]);
+        } 
         if($request->estatus==3){
             foreach ($request->materiasReprobadas as $mr){
            MateriasReprobadas::create([
@@ -260,7 +266,12 @@ class StudentsController extends Controller
             'motivo' => $motivo,
             'activo' => $request->estatus==1 || $request->estatus==5 ? 1 : 0 
         ]);
-         
+        if($request->estatus==1 || $request->estatus==5){    
+        AlumnosGrupos::create([  
+            'alumno_id'   => $ida,
+            'grupo_id'      => $request->grupo,
+        ]);
+        }  
         if($request->estatus==3){
             DB::delete("DELETE FROM materias_reprobadas WHERE alumno_id=$ida;");
             foreach ($request->materiasReprobadas as $mr){

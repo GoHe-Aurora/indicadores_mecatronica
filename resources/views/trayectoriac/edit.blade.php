@@ -11,11 +11,11 @@
     @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
     <div class="card">
             <div class="card-header bg-success text-light" style="text-align: center;">
-                <h3>V A L O R A C I Ó N  &nbsp; A E</h3>
+                <h3>T R A Y E C T O R I A   &nbsp;C U A T R I M E S T R A L</h3>
             </div>
             <div class="card-body">
-                @foreach($alumno as $a)
-                    <form id="formulario-actualizar-vae" action="{{ route('valoracion_ae.update', $a->idv) }}" method="POST" enctype="multipart/form-data">
+                @foreach($tc as $t)
+                    <form id="formulario-actualizar-tc" action="{{ route('trayectoriac.update', $t->idtc) }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PATCH')
                                 @if ($errors->any())
@@ -33,13 +33,12 @@
                     <select class="form-select" id="grupo" name="grupo">
                         <option value="">Selección</option>
                         @foreach($grupos as $grupo)
-                            <option value="{{ $grupo->idgr }}" {{ (old('grupo') == $grupo->idgr || $grupo->idgr==$a->idgr ) ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
+                            <option value="{{ $grupo->idgr }}" {{ (old('grupo') == $grupo->idgr) ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
                         @endforeach
                     </select>
                 </div>    
 
                 <div class="col-md-6 col-xs-3 pb-3">
-                    <input type="hidden" class="alumno_id" value="{{ $a->ida }}">
                     <label for="alumno">Alumno: <b class="text-danger">*</b></label>
                     <select class="form-select" id="alumno" name="alumno">
                         <option value="">Selección</option>
@@ -52,49 +51,121 @@
             <div class="row">
                 
                 <div class="form-group col-xs-3 col-md-6">
-                     <label for="promedio">Promedio: <b class="text-danger">*</b></label>
-                    <input type="number" class="form-control" id="promedio" name="promedio" value="{{ $a->promedio }}" step="0.01" min="0" max="10" placeholder="Ingresa un promedio" required>
+                     <label for="materia">Materia: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="materia" name="materia">
+                        <option value="">Selección</option>
+                        @foreach($materias as $materia)
+                            <option value="{{ $materia->idm }}" {{ (old('materia') == $materia->idm || $t->materia_id==$materia->idm) ? 'selected' : '' }}>{{ $materia->nombre }} {{ $materia->descripcion }}</option>
+                        @endforeach
+                    </select>
+
+                </div>
+                <input type="hidden" class="unidad" value="{{$t->unidad}}">
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="unidad">Unidad: <b class="text-danger">*</b></label>
+                    <select class="form-select" id="unidad" name="unidad">
+                        <option value="">Selección</option>
+                        
+                    </select>
 
                 </div>
             </div>
+            <div class="row">
+                
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="actitud">Actitud: <b class="text-danger">*</b></label>
+                    <input type="number" class="form-control" id="actitud" name="actitud" value="{{ $t->actitud }}" placeholder="Ingresa la calificación" required> 
+
+                </div>
+                <div class="form-group col-xs-3 col-md-6">
+                     <label for="conocimiento">Conocimiento: <b class="text-danger">*</b></label>
+                    <input type="number" class="form-control" id="conocimiento" name="conocimiento" value="{{ $t->conocimiento }}" placeholder="Ingresa la calificación" required>
+
+                </div>
+                
+            </div>
+            <div class="row">
+            <div class="form-group col-xs-3 col-md-6">
+                     <label for="desempeno">Desempeño: <b class="text-danger">*</b></label>
+                    <input type="number" class="form-control" id="desempeno" name="desempeno" value="{{ $t->desempeno }}" placeholder="Ingresa la calificación" required>
+             </div>
+             <div class="form-group col-xs-3 col-md-6">
+                     <label for="calificacion">Calificación: <b class="text-danger">*</b></label>
+                    <input type="number" class="form-control" id="calificacion" name="calificacion" value="{{ $t->calificacion }}" required disabled>
+             </div>
+                </div>
 
 
                                 <div class="form-group text-center">
                                     <button title="Actualizar" type="submit" id="submit" class="btn btn-primary"><i class="fas fa-user-check"></i></button>
-                                    <a title="Guardar" href="{{ route('valoracion_ae.index') }}" class="btn btn-danger"><i class="fas fa-ban"></i></a>
+                                    <a title="Guardar" href="{{ route('trayectoriac.index') }}" class="btn btn-danger"><i class="fas fa-ban"></i></a>
                                 </div>
                     </form>
                  @endforeach
 
                  <script>
         $( document ).ready(function() {
-            if($('#grupo').val()!=''){
-                studentsByGroup($('#grupo').val(),2,$('.alumno_id').val());
+            if($('#materia').val()!=''){
+                unidades($('#materia').val(),$('.unidad').val());
             }
-            $('#grupo').change(function(){
-                $("#alumno").find('option').not(':first').remove();
+            $('#materia').change(function(){
+                $("#unidad").find('option').not(':first').remove();
                 if($(this).val()!=''){
-                    studentsByGroup($(this).val(),1,);
+                    unidades($(this).val());
                 }   
             })
-        function studentsByGroup(idg,opc,ida){
+    $('#grupo').change(function(){
+                $("#alumno").find('option').not(':first').remove();
+                if($(this).val()!=''){
+                    studentsByGroup($(this).val(),1);
+                }   
+            })
+    $('#actitud,#conocimiento,#desempeno').keyup(function(e){
+        var code = (e.which) ? e.which : e.keyCode;
+        if(code>=48 && code<=57){
+                if($('#actitud').val()!='' && $('#conocimiento').val()!='' && $('#desempeno').val()!=''){
+                let suma = parseFloat($('#actitud').val())+parseFloat($('#conocimiento').val())+parseFloat($('#desempeno').val()); 
+                let calif = suma/3;  
+                $('#calificacion').val(calif.toFixed(2)); 
+                } 
+            }
+            })
+        function studentsByGroup(idg,opc){
             $.ajaxSetup({
              headers: {
                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
+             }
+         });
             $.ajax({
                url:'/students/by_group',
-               data:{'grupo_id':idg,'opc':opc,'ida':ida},
+               data:{'grupo_id':idg,'opc':opc},
                type:'post',
                success:  function (response) {
                     $.each(response,function(i,val){
-                        $('#alumno').append('<option '+(ida==val.ida ? "selected" : "")+' value="'+val.ida+'">'+val.nombre+' '+val.app+' '+val.apm+'</option>');
+                        $('#alumno').append('<option value="'+val.ida+'">'+val.nombre+' '+val.app+' '+val.apm+'</option>');
                     })  
                },
                
              });
-        }  
+        }   
+        function unidades(materia,unidad){
+            $.ajaxSetup({
+             headers: {
+                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+             }
+         });
+            $.ajax({
+               url:'/trayectoriac/unidades',
+               data:{'materia':materia,'unidad':unidad},
+               type:'post',
+               dataType:'json',
+               success:  function (response) {
+                    $.each(response,function(i,val){
+                        $('#unidad').append('<option '+(val==unidad ? 'selected' : '')+' value="'+val+'">'+val+'</option>');
+                    })        
+               },
+             });
+        }   
         }); 
 
     </script>

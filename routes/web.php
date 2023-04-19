@@ -17,6 +17,7 @@ use App\Http\Controllers\Asesorias\AsesoriasController;
 use App\Http\Controllers\Tutorias\TutoriasController;
 use App\Http\Controllers\ValoracionAE\ValoracionAEController;
 use App\Http\Controllers\TrayectoriaC\TrayectoriaCController;
+use App\Http\Controllers\AsigGruposPTC\AsigGruposPTCController;
 
 //////////// RUTAS PARA LA PARTE INICIAL DEL SISTEMA. ///////////////
 
@@ -74,11 +75,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('asesorias/update_obs', [AsesoriasController::class,'update_obs'])->name('asesorias.update_obs');
     Route::post('asesorias/update_evidencia', [AsesoriasController::class,'update_evidencia'])->name('asesorias.update_evidencia');
     Route::resource('asesorias', AsesoriasController::class, ['names' => 'asesorias']);
+    Route::post('trayectoriac/unidades', [TrayectoriaCController::class,'unidades'])->name('trayectoriac.unidades');
+    Route::get('trayectoriac/reporte/{id}', [TrayectoriaCController::class,'reporte'])->name('trayectoriac.reporte');
+    Route::post('trayectoriac/reporte_pdf', [TrayectoriaCController::class,'reporte_pdf'])->name('trayectoriac.reporte_pdf');
     Route::resource('trayectoriac', TrayectoriaCController::class, ['names' => 'trayectoriac']);
     Route::get('tutorias/delete/{id}', [TutoriasController::class,'delete'])->name('tutorias.delete');
     Route::resource('tutorias', TutoriasController::class, ['names' => 'tutorias']);
     Route::get('valoracion_ae/delete/{id}', [ValoracionAEController::class,'delete'])->name('valoracion_ae.delete');
     Route::resource('valoracion_ae', ValoracionAEController::class, ['names' => 'valoracion_ae']);
+    Route::get('asig_grupos_ptc/delete/{id}', [AsigGruposPTCController::class,'delete'])->name('asig_grupos_ptc.delete');
+    Route::resource('asig_grupos_ptc', AsigGruposPTCController::class, ['names' => 'asig_grupos_ptc']);
     // Ruta para editar el perfil.
     Route::get('editar-perfil', [CuentasController::class, 'editar_perfil'])->name('editar-perfil');
     Route::post('editar-perfil', [CuentasController::class, 'editar_perfil_post'])->name('editar-perfil.post');
