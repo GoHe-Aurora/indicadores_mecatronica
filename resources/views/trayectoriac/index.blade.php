@@ -65,7 +65,7 @@
                 </select>   
             </div>
             <div class="col-sm-4">
-               <a class="reporte" href="#">Reporte
+               <a class="reporte" href="#">Reporte</a>
          </div>
         </form>
         </div>

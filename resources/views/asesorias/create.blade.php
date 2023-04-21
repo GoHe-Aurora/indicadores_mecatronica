@@ -1,6 +1,6 @@
 @extends('layout.layout')
 @section('content')
-@if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+{{--@if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)--}}
 
 <div class="card">
     <div class="card-header bg-success text-light text-center">
@@ -111,5 +111,5 @@
         }    
     });
 </script>
-@endif
+{{--@endif--}}
 @endsection

@@ -134,34 +134,51 @@ class AsesoriasController extends Controller
         DB::update("UPDATE asesorias_alumnos SET observaciones='$request->obs' WHERE idasal=$request->id;");
         return json_encode('El alumno se ha actualizado exitosamente');       
     }
+    public function update_asesoria(Request $request)
+    {
+        $name = '';
+        $R = DB::select("SELECT idasal FROM asesorias_alumnos WHERE idal=$request->idal AND fecha='$request->fecha';");
+        if(!empty($request->tipo)){
+       if(isset($R[0])){
+        $Q = DB::select("SELECT evidencia FROM asesorias_evidencia WHERE fecha='$request->fecha';");
+        $idasal = $R[0]->idasal;
+        DB::update("UPDATE asesorias_alumnos SET idal=$request->idal,tipo=$request->tipo,fecha='$request->fecha' WHERE idasal=$idasal");
+         $t= 'actualizado';  
+        }else{
+        DB::insert("INSERT INTO asesorias_alumnos(idal,tipo,fecha) VALUES($request->idal,$request->tipo,'$request->fecha')");
+        $id = DB::getPdo()->lastInsertId();;
+        }
+        }else if(isset($R[0])){
+           
+           $idasal = $R[0]->idasal;
+           DB::delete("DELETE FROM asesorias_alumnos WHERE idasal=$idasal;");
+           
+        }      
+         $t= 'agregado';
+       return json_encode(array('response'=>'La asesoria se ha '.$t.' exitosamente'));       
+    }
     public function update_evidencia(Request $request)
     {
-       if(!empty($request->id)){
-         $Q = DB::select("SELECT evidencia FROM asesorias_evidencia WHERE idae=$request->id;");
-        Storage::disk('public')->delete('evidencia_asesorias/'.$Q[0]->evidencia);
-        Storage::disk('evidencia_asesorias')->delete($Q[0]->evidencia);
         if(isset($request->file)){
+        $Q = DB::select("SELECT evidencia FROM asesorias_evidencia WHERE fecha='$request->fecha';");
+           if(isset($Q[0])){
+              Storage::disk('public')->delete('evidencia_asesorias/'.$Q[0]->evidencia);
+              Storage::disk('evidencia_asesorias')->delete($Q[0]->evidencia);
+           }
         $file = $request->file;
         $name = time() . '.' . $file->getClientOriginalExtension();
         //$originalName = $request->archivo->getClientOriginalName();
         Storage::disk('evidencia_asesorias')->put($name, File::get($file));
         Storage::disk('public')->put('evidencia_asesorias/' . $name, File::get($file));
+        if(isset($Q[0])){
+           DB::update("UPDATE asesorias_evidencia SET evidencia='$name' WHERE fecha='$request->fecha'"); 
+            $t= 'actualizado';
+        }else{
+            DB::insert("INSERT INTO asesorias_evidencia(evidencia,fecha) VALUES('$name','$request->fecha')"); 
+            $t= 'agregado';
         }
-        DB::update("UPDATE asesorias_evidencia SET evidencia='$name',fecha='$request->fecha'");
-         $t= 'actualizado';  
-       }else{
-        if(isset($request->file)){
-        $file = $request->file;
-        $name = time() . '.' . $file->getClientOriginalExtension();
-        //$originalName = $request->archivo->getClientOriginalName();
-        Storage::disk('evidencia_asesorias')->put($name, File::get($file));
-        Storage::disk('public')->put('evidencia_asesorias/' . $name, File::get($file));
-        DB::insert("INSERT INTO asesorias_evidencia(evidencia,fecha) VALUES('$name',$request->fecha)");
-        }
-         
-         $t= 'agregado';
-       }
-       return json_encode(array('response'=>'La evidencia se ha '.$t.' exitosamente','nfile'=>$name));       
+        }   
+        return json_encode(array('response'=>'La evidencia se ha '.$t.' exitosamente','nfile'=>$name));
     }
     /**
      * Vista que muestra un formulario para editar un usuario.

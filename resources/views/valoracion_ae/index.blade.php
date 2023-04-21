@@ -43,7 +43,7 @@
                 <select class="form-control" name="grupo_tsu" id="grupo_tsu">
                     <option value="">Selecciona una opción</option>
                 @foreach($grupos_tsu as $grupo)
-                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
+                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_tsu_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
                         @endforeach
                 </select>  
                 <br>
@@ -59,7 +59,7 @@
                 <select class="form-control" name="grupo_ing" id="grupo_ing">
                     <option value="">Selecciona una opción</option>
                 @foreach($grupos_ing as $grupo)
-                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
+                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_ing_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
                         @endforeach
                 </select>    
 

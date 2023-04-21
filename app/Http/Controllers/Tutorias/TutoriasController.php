@@ -26,7 +26,14 @@ class TutoriasController extends Controller
     {
         
         $array = array();
-        $tutorias = DB::select("SELECT t.idt,u.nombre,u.app,u.apm,t.tipo,g.nombre grupo,CONCAT(a.nombre,' ',a.app,' ',a.apm) alumno,t.fecha,t.archivo,t.archivo_nombre FROM users u INNER JOIN tutorias t ON u.idu = t.maestro_id LEFT JOIN grupos g ON t.grupo_id=g.idgr LEFT JOIN alumnos a ON t.alumno_id=a.ida;");
+        $tipo = auth()->user()->idtu_tipos_usuarios;
+        if($tipo==1){
+          $condition = '';
+        }else{
+          $idu = auth()->user()->idu;  
+          $condition = "WHERE t.maestro_id=$idu";   
+        }
+        $tutorias = DB::select("SELECT t.idt,u.nombre,u.app,u.apm,t.tipo,g.nombre grupo,CONCAT(a.nombre,' ',a.app,' ',a.apm) alumno,t.fecha,t.archivo,t.archivo_nombre FROM users u INNER JOIN tutorias t ON u.idu = t.maestro_id LEFT JOIN grupos g ON t.grupo_id=g.idgr LEFT JOIN alumnos a ON t.alumno_id=a.ida $condition;");
         function archivo($archivo,$name){
             $link = "<a href='./storage/evidencia_tutorias/".$archivo."' target='_blank'>".$name."</a>";
             return $link;
@@ -60,7 +67,14 @@ class TutoriasController extends Controller
      */
     public function create()
     {
-        $maestros = DB::select("SELECT idu,nombre,app,apm FROM users WHERE idtu_tipos_usuarios=2 OR idtu_tipos_usuarios=3;");
+        $tipo = auth()->user()->idtu_tipos_usuarios;
+        if($tipo==1){
+          $condition = '';
+        }else{
+          $idu = auth()->user()->idu;  
+          $condition = "AND idu=$idu";   
+        }
+        $maestros = DB::select("SELECT idu,nombre,app,apm FROM users WHERE (idtu_tipos_usuarios=2 OR idtu_tipos_usuarios=3) $condition;");
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;"); 
         return view( 'tutorias.create', compact('maestros','grupos'));
 

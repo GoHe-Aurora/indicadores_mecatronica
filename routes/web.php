@@ -70,9 +70,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('students/activar/{id}', [StudentsController::class,'activar'])->name('students.activar');
     Route::get('students/desactivar/{id}', [StudentsController::class,'desactivar'])->name('students.desactivar');
     Route::post('students/by_group', [StudentsController::class,'by_group'])->name('students.by_group');
+    Route::post('students/import', [StudentsController::class,'import'])->name('students.import');
     Route::resource('students', StudentsController::class, ['names' => 'students']);
     Route::post('asesorias/update_tipo', [AsesoriasController::class,'update_tipo'])->name('asesorias.update_tipo');
     Route::post('asesorias/update_obs', [AsesoriasController::class,'update_obs'])->name('asesorias.update_obs');
+    Route::post('asesorias/update_asesoria', [AsesoriasController::class,'update_asesoria'])->name('asesorias.update_asesoria');
     Route::post('asesorias/update_evidencia', [AsesoriasController::class,'update_evidencia'])->name('asesorias.update_evidencia');
     Route::resource('asesorias', AsesoriasController::class, ['names' => 'asesorias']);
     Route::post('trayectoriac/unidades', [TrayectoriaCController::class,'unidades'])->name('trayectoriac.unidades');

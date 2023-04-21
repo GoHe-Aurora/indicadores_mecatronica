@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use App\Imports\AlumnosImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentsController extends Controller
 {
@@ -48,6 +50,7 @@ class StudentsController extends Controller
     WHEN a.estatus_id = 4 THEN em.motivo 
     WHEN a.estatus_id = 5 THEN em.motivo
     ELSE '' END motivo FROM alumnos a $condition1 INNER JOIN estatus e ON a.estatus_id=e.ide LEFT JOIN cuatrimestres c ON g.cuatrimestre_id=c.idc LEFT JOIN estatus_motivos em ON em.idem=a.motivo LEFT JOIN materias_reprobadas mr ON a.ida=mr.alumno_id LEFT JOIN materias m ON m.idm=mr.materia_id $query GROUP BY a.ida $order;");
+        $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
         function btn($ida,$activo){
             if($activo==1){
                 $botones = "<a href=\"#desactivar-alumno-\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('desactivar-alumno-$ida')\"><i class='fas fa-power-off'></i></a>"
@@ -78,7 +81,7 @@ class StudentsController extends Controller
             ));
         }
         $json = json_encode($array);
-        return view("students.index", compact("json","alumnos","years","fechaIni","fechaFin"));
+        return view("students.index", compact("json","alumnos","years","fechaIni","fechaFin","grupos"));
     }
 
     /**
@@ -185,6 +188,12 @@ class StudentsController extends Controller
         return back()->with('mensaje', 'El alumno se ha habilitado exitosamente');
 
     }
+    public function import(Request $request)
+    {
+      Excel::import(new AlumnosImport($request->grupo), $request->file('file'));
+      return  json_encode('Los alumnos se importaron correctamente');         
+    }
+
     public function by_group(Request $request)
     {
         $idgr = $request->grupo_id;
@@ -192,7 +201,7 @@ class StudentsController extends Controller
         $condition = (isset($request->opc) AND $request->opc==1) ? "AND ida NOT IN (SELECT alumno_id FROM valoracion_ae )" : '';
         $condition2 = (isset($request->opc) AND $request->opc==2) ? "AND ida NOT IN (SELECT alumno_id FROM valoracion_ae WHERE alumno_id!=$ida)" : '';
         
-        $alumnos = DB::select("SELECT ida,nombre,app,apm FROM alumnos WHERE grupo_id=$idgr $condition;");
+        $alumnos = DB::select("SELECT ida,nombre,app,apm FROM alumnos WHERE grupo_id=$idgr $condition $condition2;");
         return $alumnos;
 
     }
@@ -281,9 +290,7 @@ class StudentsController extends Controller
         ]);   
            }
         }
-
-                
-                return redirect()->route('students.index')->with('mensaje', 'El alumno se ha actualizado exitosamente');
+        return redirect()->route('students.index')->with('mensaje', 'El alumno se ha actualizado exitosamente');
             
     }
 

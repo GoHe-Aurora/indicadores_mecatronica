@@ -8,7 +8,7 @@
         if (es) ZingGrid.registerLanguage(es, 'custom');
         </script>
     @endsection
-@if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+{{--@if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)--}}
     <div class="card">
         <div class="card-header">
             @if (Session::has('mensaje'))
@@ -67,7 +67,7 @@
               <!--a type="button" class="btn btn-primary mt-1" href="{{ route('asesorias.update_evidencia')}}"> Guardar</a--> 
                <a class="upload_e" href="#">Subir Evidencia</a>
                <!--button type="submit" class="btn btn-primary upload_e">Subir</button-->
-               <a data-id="{{isset($id[0]) ? $id[0]->idae : ''}}" class="download_e" style="margin-left: 10px;" href="{{isset($id[0]) ? './storage/evidencia_asesorias/'.$id[0]->evidencia : ''}}" target="_blank">Descargar Evidencia</a>
+               <a data-id="{{isset($id[0]) ? $id[0]->idae : ''}}" class="download_e" style="margin-left: 10px;" href="{{isset($id[0]) ? './storage/evidencia_asesorias/'.$id[0]->evidencia : '#'}}" target="{{isset($id[0]) ? '_blank' : ''}}">Descargar Evidencia</a>
          </div>   
         </form>
         </div>
@@ -117,15 +117,18 @@
          $('.save').click(function() {
                obs($(this).prev().data('id'),$(this).prev().val()); 
          })
-        $('.ck').change(function() {
+        $('.ck').on('change',function() {
             del = false;
             if($('.fecha').val()!=''){
-                if($(this).attr('value')==1){
+                tipo = $(this).attr('value');
+                if($(this).attr('value')==1 && ($(".ck[value='1']").prop('checked') || $(".ck[value='2']").prop('checked'))){
                     $(".ck[value='2']").prop('checked', false); 
-                }else if($(this).attr('value')==2){
+                }else if($(this).attr('value')==2 && ($(".ck[value='1']").prop('checked') || $(".ck[value='2']").prop('checked'))){
                     $(".ck[value='1']").prop('checked', false); 
+                }else{
+                    tipo = '';
                 } 
-                ck($(this).attr('value'),$(this).data('id'),$(this).data('alumno'),$('.fecha').val());
+                ck(tipo,$(this).data('alumno'),$('.fecha').val());
             }else{
                 alert('Debes de seleccionar una fecha !!');
                 $(this).prop('checked', false); 
@@ -134,24 +137,25 @@
         })
          $('.upload_e').click(function() {
             if($('.evidencia').prop("files")[0]){
-              upload_e($('.download_e').data('id'),$('.evidencia').prop("files")[0],$('.fecha').val());  
+              upload_e($('.evidencia').prop("files")[0],$('.fecha').val());  
           }else{
              alert('Debes de seleccionar un archivo !!');
           }
             
          })
-        function ck(tipo,id,idal,fecha){
+        function ck(tipo,idal,fecha,th){
             $.ajaxSetup({
              headers: {
                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
              }
          });
             $.ajax({
-               url:'/asesorias/update_evidencia',
-               data:{'id':id,'tipo':tipo,'idal':idal,fecha:fecha},
+               url:'/asesorias/update_asesoria',
+               data:{'tipo':tipo,'idal':idal,fecha:fecha},
                type:'post',
-               success:  function (response) {
-                   alert(response);
+               dataType: 'json',
+               success:  function (data) {
+                   alert(data.response);
                },
                
              });
@@ -172,25 +176,25 @@
                
              });
         }
-        function upload_e(id,file,fecha){
+        function upload_e(file,fecha){
             $.ajaxSetup({
              headers: {
                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
              }
          });
             var fd = new FormData();
-            fd.append('id',id);
             fd.append('file',file);
             //fd.append('_token',CSRF_TOKEN);
             fd.append('fecha',fecha);
             $.ajax({
                url:'/asesorias/update_evidencia',
-               data:/*{'id':id,'file':file,'fecha':fecha}*/fd,
+               data:fd,
                type:'post',
                contentType: false,
                processData: false,
                dataType: 'json',
                success:  function (data) {
+                   $('.download_e').attr('target','_blank');
                    $('.download_e').attr('href','./storage/evidencia_asesorias/'+data.nfile)
                    alert(data.response);
                },
@@ -201,5 +205,5 @@
     });
      </script>
 
-@endif
+{{--@endif--}}
 @endsection

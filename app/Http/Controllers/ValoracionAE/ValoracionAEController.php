@@ -22,14 +22,20 @@ class ValoracionAEController extends Controller
      */
     public function index(Request $request)
     {
-        $grupo_id = '';
+        $grupo_tsu_id = '';
+        $grupo_ing_id = '';
         $condition = '';
-        if($request->grupo){
-            $grupo_id = $request->grupo;
-            $condition = "WHERE g.idgr=$grupo_id";
+        $condition2 = '';
+        if($request->grupo_tsu){
+            $grupo_tsu_id = $request->grupo_tsu;
+            $condition = "WHERE g.idgr=$grupo_tsu_id";
+        }
+        if($request->grupo_ing){
+            $grupo_ing_id = $request->grupo_ing;
+            $condition2 = "WHERE g.idgr=$grupo_ing_id";
         }
         $array = array();
-        $alumnos = DB::select("SELECT v.*,a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,g.idgr FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON a.grupo_id=g.idgr $condition;");
+        $alumnos = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre gr_tsu,g2.nombre gr_ing FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON v.grupo_tsu=g.idgr LEFT JOIN grupos g2 ON v.grupo_ing=g2.idgr $condition $condition2;");
         $grupos_tsu = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id<7;");
         $grupos_ing = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id>=7;");
         function btn($idv){
@@ -46,15 +52,15 @@ class ValoracionAEController extends Controller
                 'nombre'              => $alumno->nombre,
                 'app'                 => $alumno->app,
                 'apm'                 => $alumno->apm,
-                'grupo_tsu'           => $alumno->grupo_tsu,
-                'grupo_ing'           => $alumno->grupo_ing,
+                'grupo_tsu'           => $alumno->gr_tsu,
+                'grupo_ing'           => $alumno->gr_ing,
                 'promedio_tsu'        => $alumno->promedio_tsu,
                 'promedio_ing'        => $alumno->promedio_ing,
                 'operaciones'         => btn($alumno->idv)
             ));
         }
         $json = json_encode($array);
-        return view("valoracion_ae.index", compact("json","alumnos","grupos_tsu","grupos_ing","grupo_id"));
+        return view("valoracion_ae.index", compact("json","alumnos","grupos_tsu","grupos_ing","grupo_tsu_id","grupo_ing_id"));
     }
 
     /**
@@ -62,9 +68,10 @@ class ValoracionAEController extends Controller
      */
     public function create()
     {
-        $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
+        $grupos_tsu = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id<7;");
+        $grupos_ing = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id>=7;");
 
-        return view( 'valoracion_ae.create', compact('grupos'));
+        return view( 'valoracion_ae.create', compact('grupos_tsu','grupos_ing'));
 
     }
 
@@ -76,9 +83,9 @@ class ValoracionAEController extends Controller
 
         $validator = $request->validate([
             'alumno' => 'required',
-            'promedio_tsu'  => 'required|numeric',
-            'promedio_ing'  => 'required|numeric',
-            'grupo' => 'required', 
+            'promedio_tsu'  => 'required|numeric|min:8',
+            'promedio_ing'  => 'required|numeric|min:8',
+            'grupo_tsu' => 'required', 
         ]);
         
         ValoracionAE::create([
@@ -93,10 +100,12 @@ class ValoracionAEController extends Controller
 
     public function edit($idv)
     {
-        $alumno = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre grupo,g.idgr FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON a.grupo_id=g.idgr WHERE v.idv=$idv;");  
-        $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
+        $alumno = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre gr_tsu,g2.nombre gr_ing FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON v.grupo_tsu=g.idgr LEFT JOIN grupos g2 ON v.grupo_ing=g2.idgr WHERE v.idv=$idv;");
+
+        $grupos_tsu = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id<7;");
+        $grupos_ing = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id>=7;");
         
-        return view('valoracion_ae.edit', compact('alumno','grupos'));
+        return view('valoracion_ae.edit', compact('alumno','grupos_tsu','grupos_ing'));
     }
 
     /**
@@ -106,13 +115,16 @@ class ValoracionAEController extends Controller
     {
         $validator = $request->validate([
             'alumno' => 'required',
-            'promedio'  => 'required|numeric',
-            'grupo' => 'required', 
+            'promedio_tsu'  => 'required|numeric|min:8',
+            'promedio_ing'  => 'required|numeric|min:8',
+            'grupo_tsu' => 'required', 
         ]);
         ValoracionAE::where('idv',$idv)->update([
             'alumno_id' => $request->alumno,
-            'promedio' => $request->promedio,
-            'grupo_id' => $request->grupo,
+            'promedio_tsu' => $request->promedio_tsu,
+            'promedio_ing' => $request->promedio_ing,
+            'grupo_tsu' => isset($request->grupo_tsu) ? $request->grupo_tsu : null,
+            'grupo_ing' => isset($request->grupo_ing) ? $request->grupo_ing : null
         ]);
                 
                 return redirect()->route('valoracion_ae.index')->with('mensaje', 'El registro se ha actualizado exitosamente');
