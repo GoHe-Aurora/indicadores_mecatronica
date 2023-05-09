@@ -76,7 +76,7 @@
      
     	<zing-grid
         	lang="custom"
-        	caption='Valoración de Aprovechamiento Escolar'
+        	caption='Resultados de EGEL y ECG'
         	sort
         	search
         	pager

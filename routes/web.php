@@ -26,7 +26,6 @@ Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('cache:clear');
     return 'Application cache cleared';
 });
-
 // Ejecución de los recordatorios.
 Route::get('/run-schedules', function() {
     $exitCode = Artisan::call('schedule:work');

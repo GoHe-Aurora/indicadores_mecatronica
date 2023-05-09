@@ -213,7 +213,7 @@
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
              <i class="fas fa-check"></i>
-              <p>Valoración AE</p>
+              <p>Resultados EGEL Y ECG</p>
               <i class="fas fa-angle-left right"></i>
             </a>
             <ul class="nav nav-treeview">
@@ -230,7 +230,7 @@
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
              <i class="fas fa-check"></i>
-              <p>Trayectoria Cuatri.</p>
+              <p>Sistema de Calificacion..</p>
               <i class="fas fa-angle-left right"></i>
             </a>
             <ul class="nav nav-treeview">

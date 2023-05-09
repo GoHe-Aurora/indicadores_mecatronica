@@ -153,7 +153,7 @@
                                 <div class="col-lg-8 col-sm-12">
                                     <div class="mt-3">
                                         <h5>
-                                            VALORACIÓN DE AE 
+                                            RESULTADOS DE EGEL Y ECG
                                         </h5>
                                     </div>
                                     <div class="mt-3">
@@ -181,7 +181,7 @@
                                 <div class="col-lg-8 col-sm-12">
                                     <div class="mt-3">
                                         <h5>
-                                          TRAYECTORIA CUATRIMESTRAL
+                                          SISTEMA DE CALIFICACIONES CUATRIMESTRAL
                                         </h5>
                                     </div>
                                     <div class="mt-3">

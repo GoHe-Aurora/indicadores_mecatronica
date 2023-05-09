@@ -117,7 +117,8 @@ class TrayectoriaCController extends Controller
         if(isset($array[0])){
            $arr = array_merge($array[0],$arr);
         }
-        $json = json_encode(array($arr));
+        //$json = json_encode(array($arr));
+        $json = '[{"idtc":1,"nombre":"Karen","app":"Torres","apm":"P\u00e9rez","operaciones":"<\/i><\/a> <\/i> <\/a>","actitud1":"Responsabilidad 8 \n Colaborativo 9 \n Relaciones Interpersonales 10 \n Creatividad 7","conocimiento1":"Marco Teórico y Conceptual 8 \nManejo de Información 10","desempeno1":"Practicas 9 \n Estudios de Caso 10 \n Proyecto 7 \n Ejerccios 8 \n Ensayo 10","calificacion1":8,"actitud2":6,"conocimiento2":6,"desempeno2":6,"calificacion2":6,"actitud3":"SIN ASIGNAR","conocimiento3":"SIN ASIGNAR","desempeno3":"SIN ASIGNAR","calificacion3":"SIN ASIGNAR","actitud4":"SIN ASIGNAR","conocimiento4":"SIN ASIGNAR","desempeno4":"SIN ASIGNAR","calificacion4":"SIN ASIGNAR"}]';
         return view("trayectoriac.index", compact("length","mat","grupo_id","alumnos","grupos","materias","json"));
     }
 
