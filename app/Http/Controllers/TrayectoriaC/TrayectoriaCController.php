@@ -34,53 +34,9 @@ class TrayectoriaCController extends Controller
             $mat = $request->materia;
         }
         $array = array();
-        $ACTITUD= '';
-        $CONOCIMIENTO= '';
-        $DESEMPENO = '';
-        $CALIFICACION = '';
         $unidades = DB::select("SELECT unidades FROM materias WHERE idm=$mat;");
         $length = $unidades[0]->unidades;
-        $c = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,tc.unidad FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$mat AND a.grupo_id=$grupo_id;");
-        if(isset($c[0])){
-        for ($i = 1; $i <= $length; $i++) {
-            if($i==$length){
-                $coma = '';
-            }else{
-                $coma = ',';
-            }
-            $ACTITUD .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.actitud END) AS actitud".$i.$coma;
-        }
-        for ($i = 1; $i <= $length; $i++) {
-            if($i==$length){
-                $coma = '';
-            }else{
-                $coma = ',';
-            }
-            $CONOCIMIENTO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.conocimiento END) AS conocimiento".$i.$coma;
-        }
-        for ($i = 1; $i <= $length; $i++) {
-            if($i==$length){
-                $coma = '';
-            }else{
-                $coma = ',';
-            }
-            $DESEMPENO .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.desempeno END) AS desempeno".$i.$coma;
-        }
-        for ($i = 1; $i <= $length; $i++) {
-            if($i==$length){
-                $coma = '';
-            }else{
-                $coma = ',';
-            }
-            $CALIFICACION .= "SUM(CASE WHEN tc.unidad=".$i." THEN tc.calificacion END) AS calificacion".$i.$coma;
-        }
-        }else{
-            $ACTITUD = "tc.idtc";
-            $CONOCIMIENTO = "tc.idtc";
-            $DESEMPENO = "tc.idtc";
-            $CALIFICACION = "tc.idtc";
-        }
-        $alumnos = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,a.nombre,a.app,a.apm,tc.unidad,$ACTITUD,$CONOCIMIENTO,$DESEMPENO,$CALIFICACION FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$mat;");
+        $alumnos = DB::select("SELECT tc.*,a.nombre,a.app,a.apm FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida;");
         $grupos = DB::select("SELECT idgr,nombre,descripcion FROM grupos;");
         $materias = DB::select("SELECT idm,nombre,descripcion FROM materias WHERE unidades IS NOT NULL;");
         function btn($idtc){
@@ -90,35 +46,25 @@ class TrayectoriaCController extends Controller
                 
             return $botones;
         }
-        foreach ($alumnos as $alumno){
-             
-            array_push($array, [
-                'idtc'                => $alumno->idtc,
-                'nombre'              => $alumno->nombre,
-                'app'                 => $alumno->app,
-                'apm'                 => $alumno->apm,
-                'operaciones'         => btn($alumno->idtc)
-            ]);
-          
-        }
-        $arr = array();
-        if(isset($array[0])){
-        for ($i = 1; $i <= $length; $i++) {
-            $actitud = 'actitud'.$i;
-            $arr['actitud'.$i] = $alumnos[0]->$actitud!=null ?  $alumnos[0]->$actitud : 'SIN ASIGNAR';
-            $conocimiento = 'actitud'.$i;
-            $arr['conocimiento'.$i] = $alumnos[0]->$conocimiento!=null ? $alumnos[0]->$conocimiento : 'SIN ASIGNAR';;
-            $desempeno = 'desempeno'.$i;
-            $arr['desempeno'.$i] = $alumnos[0]->$desempeno!=null ? $alumnos[0]->$desempeno : 'SIN ASIGNAR';
-            $calificacion = 'calificacion'.$i;
-            $arr['calificacion'.$i] = $alumnos[0]->$calificacion!=null ? $alumnos[0]->$calificacion : 'SIN ASIGNAR';
-        }
-        }
-        if(isset($array[0])){
-           $arr = array_merge($array[0],$arr);
-        }
+        
         //$json = json_encode(array($arr));
-        $json = '[{"idtc":1,"nombre":"Karen","app":"Torres","apm":"P\u00e9rez","operaciones":"<\/i><\/a> <\/i> <\/a>","actitud1":"Responsabilidad 8 \n Colaborativo 9 \n Relaciones Interpersonales 10 \n Creatividad 7","conocimiento1":"Marco Teórico y Conceptual 8 \nManejo de Información 10","desempeno1":"Practicas 9 \n Estudios de Caso 10 \n Proyecto 7 \n Ejerccios 8 \n Ensayo 10","calificacion1":8,"actitud2":6,"conocimiento2":6,"desempeno2":6,"calificacion2":6,"actitud3":"SIN ASIGNAR","conocimiento3":"SIN ASIGNAR","desempeno3":"SIN ASIGNAR","calificacion3":"SIN ASIGNAR","actitud4":"SIN ASIGNAR","conocimiento4":"SIN ASIGNAR","desempeno4":"SIN ASIGNAR","calificacion4":"SIN ASIGNAR"}]';
+        //$json = $alumnos[0]->custom_fields;
+       $arr = array();
+       foreach ($alumnos as $key=>$a) {
+        $arr['idtc'] = $a->idtc;
+        $arr['nombre'] = $a->nombre;
+        $arr['app'] = $a->app;
+        $arr['apm'] = $a->apm;
+        $arr['actitud'] = "Responsabilidad: ".$a->responsabilidad.'\n'."Colaborativo: ".$a->colaborativo.'\n'."Relaciones Interpersonales".$a->relaciones_i.'\n'.$a->creatividad;
+        $arr['conocimiento'] = "Marco Teórico y Conceptual: ".$a->marco_tc.'\n Manejo de Información: '.$a->manejo_inf;
+        $arr['desempeno'] = "Prácticas: ".$a->practicas.'\n Estudios de Caso: '.$a->manejo_inf.'\n Proyecto: '.$a->proyecto.'\n Ejercicios: '.$a->ejercicios.'\n Ensayo: '.$a->ensayo;  
+        }
+        //$json = '[{"idtc"=>'.$prueba.'}]';
+        //return $arr;
+        $json = json_encode(array($arr));
+        //return $array;
+        /*'[{"idtc":1,"nombre":"Karen","app":"Torres","apm":"P\u00e9rez","operaciones":"<\/i><\/a> <\/i> <\/a>","actitud1":"Responsabilidad 8 \n Colaborativo 9 \n Relaciones Interpersonales 10 \n Creatividad 7","conocimiento1":"Marco Teórico y Conceptual 8 \nManejo de Información 10","desempeno1":"Practicas 9 \n Estudios de Caso 10 \n Proyecto 7 \n Ejercicios 8 \n Ensayo 10","calificacion1":8,"actitud2":6,"conocimiento2":6,"desempeno2":6,"calificacion2":6,"actitud3":"SIN ASIGNAR","conocimiento3":"SIN ASIGNAR","desempeno3":"SIN ASIGNAR","calificacion3":"SIN ASIGNAR","actitud4":"SIN ASIGNAR","conocimiento4":"SIN ASIGNAR","desempeno4":"SIN ASIGNAR","calificacion4":"SIN ASIGNAR"}]';*/
+
         return view("trayectoriac.index", compact("length","mat","grupo_id","alumnos","grupos","materias","json"));
     }
 

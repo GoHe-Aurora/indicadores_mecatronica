@@ -139,7 +139,7 @@
                 link.click();
             },
             error: function(blob){
-                console.log(blob);
+                //console.log(blob);
             }
                
              });
