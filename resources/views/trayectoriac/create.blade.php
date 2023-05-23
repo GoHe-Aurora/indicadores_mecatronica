@@ -77,18 +77,18 @@
                      <label for="actitud">Actitud: <b class="text-danger">*</b></label>
                      <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="responsabilidad" name="responsabilidad" value="{{ old('responsabilidad') }}" placeholder="Responsabilidad" required>
+                    <input type="number" class="form-control" id="responsabilidad" name="responsabilidad" value="{{ old('responsabilidad') }}" min="7" max="10"placeholder="Responsabilidad">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="colborativo" name="colborativo" value="{{ old('colborativo') }}" placeholder="Colaborativo" required> 
+                    <input type="number" class="form-control" id="colaborativo" name="colaborativo" value="{{ old('colaborativo') }}" min="7" max="10" placeholder="Colaborativo"> 
                 </div>
                  </div><br>
                  <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="relaciones_i" name="relaciones_i" value="{{ old('relaciones_i') }}" placeholder="Relaciones Interpersonales" required>
+                    <input type="number" class="form-control" id="relaciones_i" name="relaciones_i" value="{{ old('relaciones_i') }}" min="7" max="10" placeholder="Relaciones Interpersonales">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="creatividad" name="creatividad" value="{{ old('creatividad') }}" placeholder="Creatividad" required> 
+                    <input type="number" class="form-control" id="creatividad" name="creatividad" value="{{ old('creatividad') }}" min="7" max="10" placeholder="Creatividad"> 
                 </div>
                  </div>
                 </div>
@@ -96,10 +96,10 @@
                      <label for="conocimiento">Conocimiento: <b class="text-danger">*</b></label>
                      <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="marcotc" name="marcotc" value="{{ old('marcotc') }}" placeholder="Marco teórico y conceptual" required>
+                    <input type="number" class="form-control" id="marco_tc" name="marco_tc" value="{{ old('marco_tc') }}" min="7" max="10" placeholder="Marco teórico y conceptual">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="manejo_info" name="manejo_info" value="{{ old('manejo_info') }}" placeholder="Manejo de información" required> 
+                    <input type="number" class="form-control" id="manejo_info" name="manejo_info" value="{{ old('manejo_info') }}" min="7" max="10" placeholder="Manejo de información"> 
                 </div>
                  </div>
 
@@ -111,24 +111,24 @@
                      <label for="desempeno">Desempeño: <b class="text-danger">*</b></label>
                     <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="practicas" name="practicas" value="{{ old('practicas') }}" placeholder="Prácticas" required>
+                    <input type="number" class="form-control" id="practicas" name="practicas" value="{{ old('practicas') }}" min="7" max="10" placeholder="Prácticas">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="estudios_caso" name="estudios_caso" value="{{ old('estudios_caso') }}" placeholder="Estudios de caso" required> 
+                    <input type="number" class="form-control" id="estudios_caso" name="estudios_caso" value="{{ old('estudios_caso') }}" min="7" max="10" placeholder="Estudios de caso"> 
                 </div>
                  </div>
                  <br>
                  <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="proyecto" name="proyecto" value="{{ old('proyecto') }}" placeholder="Proyecto" required>
+                    <input type="number" class="form-control" id="proyecto" name="proyecto" value="{{ old('proyecto') }}" min="7" max="10" placeholder="Proyecto">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="ejercicios" name="ejercicios" value="{{ old('ejercicios') }}" placeholder="Ejercicios" required> 
+                    <input type="number" class="form-control" id="ejercicios" name="ejercicios" value="{{ old('ejercicios') }}" min="7" max="10" placeholder="Ejercicios"> 
                 </div>
                  </div><br>
                  <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="ensayo" name="ensayo" value="{{ old('ensayo') }}" placeholder="Ensayo" required>
+                    <input type="number" class="form-control" id="ensayo" name="ensayo" value="{{ old('ensayo') }}" min="7" max="10" placeholder="Ensayo">
                      </div>
                      <div class="col-md-6">
                     
@@ -139,11 +139,14 @@
                     <div class="row">
                     <div class="col-md-6"> 
                     <label for="calificacion">Calificación: <b class="text-danger">*</b></label>  
-                    <input type="number" class="form-control" id="proyecto" name="proyecto" value="{{ old('proyecto') }}" placeholder="Sin redondear" required>
+                    <input type="number" class="form-control" id="calificacion" name="calificacion" value="{{ old('calificacion') }}" placeholder="Sin redondear" required readonly>
                     </div>
                     <div class="col-md-6">
                     <label for="calificacion">Calificación Acta: <b class="text-danger">*</b></label>  
-                    <input type="number" class="form-control" id="ejercicios" name="ejercicios" value="{{ old('ejercicios') }}" placeholder="Redondeada" required> 
+                    <input type="number" class="form-control" id="calificacion_acta" name="calificacion_acta" value="{{ old('calificacion_acta') }}" placeholder="Redondeada" required readonly> 
+                    <input type="hidden" id="actitud" name="actitud">
+                    <input type="hidden" id="conocimiento" name="conocimiento">
+                    <input type="hidden" id="desempeno" name="desempeno">
                 </div>
                  </div>
              </div>
@@ -170,15 +173,54 @@
                     studentsByGroup($(this).val(),1);
                 }   
             })
-    $('#actitud,#conocimiento,#desempeno').keyup(function(e){
-        var code = (e.which) ? e.which : e.keyCode;
-        if(code>=48 && code<=57){
-                if($('#actitud').val()!='' && $('#conocimiento').val()!='' && $('#desempeno').val()!=''){
-                let suma = parseFloat($('#actitud').val())+parseFloat($('#conocimiento').val())+parseFloat($('#desempeno').val()); 
-                let calif = suma/3;  
+    $('#responsabilidad,#colaborativo,#relaciones_i,#creatividad,#marco_tc,#manejo_info,#practicas,#estudios_caso,#proyecto,#ejercicios,#ensayo').keyup(function(e){
+       // var code = (e.which) ? e.which : e.keyCode;
+        //if(code>=48 && code<=57){
+                /*if($('#actitud').val()!='' && $('#conocimiento').val()!='' && $('#desempeno').val()!=''){*/
+                a=0;
+                c=0;
+                d=0;
+                n=0;
+                if($('#responsabilidad').val()!=''){a++;} 
+                if($('#colaborativo').val()!=''){a++;}
+                if($('#relaciones_i').val()!=''){a++;}
+                if($('#creatividad').val()!=''){a++;}
+                if($('#marco_tc').val()!=''){c++;} 
+                if($('#manejo_info').val()!=''){c++;}
+                if($('#practicas').val()!=''){d++;} 
+                if($('#estudios_caso').val()!=''){d++;}
+                if($('#proyecto').val()!=''){d++;} 
+                if($('#ejercicios').val()!=''){d++;}
+                if($('#ensayo').val()!=''){d++;}
+                re = $('#responsabilidad').val()!='' ? parseFloat($('#responsabilidad').val()) : 0;
+                co = $('#colaborativo').val()!='' ? parseFloat($('#colaborativo').val()) : 0;
+                ri = $('#relaciones_i').val()!='' ? parseFloat($('#relaciones_i').val()) : 0;
+                cr = $('#creatividad').val()!='' ? parseFloat($('#creatividad').val()) : 0;
+                let actitud = a!=0 ? (re+co+ri+cr)/a : 0; 
+                mt = $('#marco_tc').val()!='' ? parseFloat($('#marco_tc').val()) : 0;
+                mi = $('#manejo_info').val()!='' ? parseFloat($('#manejo_info').val()) : 0;
+                let conocimiento = c!=0 ? (mt+mi)/c : 0;
+                pr = $('#practicas').val()!='' ? parseFloat($('#practicas').val()) : 0;
+                ec = $('#estudios_caso').val()!='' ? parseFloat($('#estudios_caso').val()) : 0;
+                pro = $('#proyecto').val()!='' ? parseFloat($('#proyecto').val()) : 0;
+                ej = $('#ejercicios').val()!='' ? parseFloat($('#ejercicios').val()) : 0;
+                en = $('#ensayo').val()!='' ? parseFloat($('#ensayo').val()) : 0;
+                let desempeno = d!=0 ? (pr+ec+pro+ej+en)/d : 0;
+                a1 = (actitud*20)/10;
+                c1 = (conocimiento*30)/10;
+                d1 = (desempeno*50)/10;
+                if(a1!=0){n++;}
+                if(c1!=0){n++;}
+                if(d1!=0){n++;}
+                $('#actitud').val(actitud);
+                $('#conocimiento').val(conocimiento);
+                $('#desempeno').val(desempeno);
+                let porcentaje = (a1+c1+d1);
+                let calif = (porcentaje*10)/100;
                 $('#calificacion').val(calif.toFixed(2)); 
-                } 
-            }
+                $('#calificacion_acta').val(Math.round(calif)); 
+                //} 
+            //}
             })
         function studentsByGroup(idg,opc){
             $.ajaxSetup({

@@ -12,7 +12,7 @@ class TrayectoriaC extends Model
     protected $table = 'trayectoria_cuatrimestral';
     protected $primaryKey = 'idtc';
     protected $fillable = [
-        'alumno_id','unidad','materia_id','actitud','conocimiento','desempeno','calificacion'
+        'alumno_id','unidad','materia_id','actitud','responsabilidad','colaborativo','relaciones_i','creatividad','conocimiento','manejo_inf','marco_tc','desempeno','practicas','estudios_caso','proyecto','ejercicios','ensayo','calificacion','calificacion_acta'
     ];
 
 }

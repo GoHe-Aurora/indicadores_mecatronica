@@ -93,9 +93,15 @@
                 <zg-column index='apm' header='Apellido Materno' type='text'></zg-column>
                 <script>
                  for (var i = 1; i <= $('.unidad').val(); i++) {
-                $('zg-column:last').after("<zg-column index='' header='Unidad "+i+"' type='text'></zg-column><zg-column index='actitud"+i+"' header='Actitud' type='text'></zg-column><zg-column index='conocimiento"+i+"' header='Conocimiento' type='text'></zg-column><zg-column index='desempeno"+i+"' header='Desempeño' type='text'></zg-column><zg-column index='calificacion"+i+"' header='Calificación' type='text'></zg-column><zg-column index='calificacion"+i+"' header='Calificación Acta' type='text'></zg-column>");   
+                $('zg-column:last').after("<zg-column index='' header='Unidad "+i+"' type='text'></zg-column><zg-column index='actitud"+i+"' header='Actitud' type='text'></zg-column><zg-column index='conocimiento"+i+"' header='Conocimiento' type='text'></zg-column><zg-column index='desempeno"+i+"' header='Desempeño' type='text'></zg-column>");
+                if(i==$('.unidad').val()){
+                   $('zg-column:last').after("<zg-column index='calificacion' header='Calificación' type='text'></zg-column><zg-column index='calificacion_acta' header='Calificación Acta' type='text'></zg-column>"); 
+                } 
+                
                 }  
                 </script>
+                
+                
                 <zg-column align="center" filter ="disabled" index='operaciones' header='Operaciones' type='text'></zg-column>
         	
     	</zing-grid>
