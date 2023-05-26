@@ -108,7 +108,7 @@
 
 	</div>
     @foreach ($alumnos as $alumno)
-    <form id="eliminar-tc-{{-- $alumno->idtc --}}" class="ocultar" action="{{-- route('trayectoriac.delete',$alumno->idtc) --}}" method="GET">
+    <form id="eliminar-tc-{{ $alumno->idtc }}" class="ocultar" action="{{ route('trayectoriac.delete',$alumno->idtc) }}" method="GET">
         @csrf
         @method('DELETE')
     </form>

@@ -56,7 +56,7 @@ class TrayectoriaCController extends Controller
             $CONOCIMIENTO = "tc.idtc";
             $DESEMPENO = "tc.idtc";
         }
-        $alumnos = DB::select("SELECT tc.idtc,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,tc.calificacion_acta,a.nombre,a.app,a.apm,tc.unidad,$ACTITUD,$CONOCIMIENTO,$DESEMPENO FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$mat GROUP BY a.ida;");
+        $alumnos = DB::select("SELECT tc.idtc,tc.alumno_id,tc.actitud,tc.conocimiento,tc.desempeno,tc.calificacion,tc.calificacion_acta,a.nombre,a.app,a.apm,tc.unidad,$ACTITUD,$CONOCIMIENTO,$DESEMPENO FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON tc.alumno_id=a.ida WHERE tc.materia_id=$mat GROUP BY a.ida;");
         $grupos = DB::select("SELECT idgr,nombre,descripcion FROM grupos;");
         $materias = DB::select("SELECT idm,nombre,descripcion FROM materias WHERE unidades IS NOT NULL;");
         function btn($idtc){
@@ -66,36 +66,34 @@ class TrayectoriaCController extends Controller
                 
             return $botones;
         }
-        foreach ($alumnos as $alumno){ 
+        $arr = array();
+        $array_final = array();
+        $filas = array();
+        foreach ($alumnos as $k=>$alumno){ 
             //$prueba = 'prueba';
-            array_push($array, [
+          array_push($array, [
                 'idtc'                => $alumno->idtc,
                 'nombre'              => $alumno->nombre,
                 'app'                 => $alumno->app,
                 'apm'                 => $alumno->apm,
                 'operaciones'         => btn($alumno->idtc),
                 'calificacion'        => $alumno->calificacion, 
-                'calificacion_acta'   => $alumno->calificacion_acta
+                'calificacion_acta'   => $alumno->calificacion_acta,
+
             ]);
-          
         }
-        $a = 0;
-        if(isset($array[0])){
-        for ($i = 1; $i <= $length; $i++) {
-            $actitud = 'actitud'.$i;
-            $arr['actitud'.$i] = isset($alumnos[$a]->$actitud)&&$alumnos[$a]->$actitud !=null ? $alumnos[$a]->$actitud : 'n/a';
-            $conocimiento = 'conocimiento'.$i;
-            $arr['conocimiento'.$i] = isset($alumnos[$a]->$conocimiento)&&$alumnos[$a]->$conocimiento!=null ? $alumnos[$a]->$conocimiento : 'n/a';
-            $desempeno = 'desempeno'.$i;
-            $arr['desempeno'.$i] = isset($alumnos[$a]->$desempeno)&&$alumnos[$a]->$desempeno!=null ? $alumnos[$a]->$desempeno : 'n/a';
-            $a++;
-        }
-        }
-        if(isset($array[0])){
-           $arr = array_merge($array[0],$arr);
-        }
-        //return $arr;
-        $json = json_encode(array($arr));
+                   foreach ($alumnos as $k=>$a){
+                    for ($i = 1; $i <= $length; $i++) {
+                   $actitud = 'actitud'.$i;
+                   $arr['actitud'.$i] = isset($a->$actitud)&&$a->$actitud !=null ? $a->$actitud : 'n/a';
+                   $conocimiento = 'conocimiento'.$i;
+                   $arr['conocimiento'.$i] = isset($a->$conocimiento)&&$a->$conocimiento!=null ? $a->$conocimiento : 'n/a';
+                   $desempeno = 'desempeno'.$i;
+                   $arr['desempeno'.$i] = isset($a->$desempeno)&&$a->$desempeno!=null ? $a->$desempeno : 'n/a';
+                      $filas[$k] = array_merge($array[$k],$arr);
+                  }
+            }
+        $json = json_encode($filas);
         return view("trayectoriac.index", compact("length","mat","grupo_id","alumnos","grupos","materias","json"));
     }
 
@@ -146,53 +144,92 @@ class TrayectoriaCController extends Controller
 
     public function edit($idtc)
     {
-        $tc = DB::select("SELECT * FROM trayectoria_cuatrimestral WHERE idtc=$idtc;");  
+        $tc = DB::select(" SELECT tc.*,a.grupo_id FROM trayectoria_cuatrimestral tc INNER JOIN alumnos a ON a.ida=tc.alumno_id WHERE tc.idtc=$idtc;");  
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
         $materias = DB::select("SELECT idm,nombre,descripcion FROM materias WHERE unidades IS NOT NULL;");
         
         return view('trayectoriac.edit', compact('tc','grupos','materias'));
+    }
+    public function atributos(Request $request)
+    {
+      $atributos = DB::select("SELECT * FROM trayectoria_cuatrimestral WHERE unidad=$request->unidad AND alumno_id=$request->ida;");   
+     return json_encode($atributos);
     }
     public function unidades(Request $request)
     {
         $array = array(); 
         $unidades = DB::select("SELECT unidades FROM materias WHERE idm=$request->materia;");
         $unidades_asig = DB::select("SELECT unidad FROM trayectoria_cuatrimestral WHERE materia_id=$request->materia;");
+        if($request->opc==1){
         for ($i = 1; $i <= $unidades[0]->unidades; $i++) {
             if(!isset($unidades_asig[$i-1]) || $i==$request->unidad){
                array_push($array,$i);  
             }     
+        }
+        }else if($request->opc==2){
+        for ($i = 1; $i <= $unidades[0]->unidades; $i++) {
+               array_push($array,$i);
+        }
         }
         return json_encode($array);
     }
     /**
      * Actualiza un usuario.
      */
-    public function update(Request $request, $idtc)
+    public function update(Request $request, $ida)
     {
-        $validator = $request->validate([
+        $validator = $request->validate([ 
             'alumno' => 'required',
-            'grupo'  => 'required',
             'materia' => 'required', 
-            'unidad' => 'required', 
-            'actitud' => 'required|numeric', 
-            'conocimiento' => 'required|numeric', 
-            'desempeno' => 'required|numeric', 
-            //'calificacion' => 'required|numeric',
+            'unidad' => 'required'
         ]);
-        $c = ($request->actitud+$request->conocimiento+$request->desempeno)/3;
-        $calif = number_format((float)$c, 2, '.', '');
-        TrayectoriaC::where('idtc',$idtc)->update([
+        $existe = DB::select("SELECT idtc FROM trayectoria_cuatrimestral WHERE alumno_id=$ida AND unidad=$request->unidad;");
+        if(isset($existe[0]->idtc)){
+       TrayectoriaC::where('idtc',$existe[0]->idtc)->update([
+            'unidad' => $request->unidad,
+            'actitud' => $request->actitud,
+            'responsabilidad' => $request->responsabilidad,
+            'colaborativo' => $request->colaborativo,
+            'relaciones_i' => $request->relaciones_i,
+            'creatividad' => $request->creatividad,
+            'conocimiento' => $request->conocimiento,
+            'manejo_inf' => $request->manejo_inf,
+            'marco_tc' => $request->marco_tc,
+            'desempeno' => $request->desempeno,
+            'practicas' => $request->practicas,
+            'estudios_caso' => $request->estudios_caso,
+            'proyecto' => $request->proyecto,
+            'ejercicios' => $request->ejercicios,
+            'ensayo' => $request->ensayo,
+            'calificacion' => $request->calificacion,
+            'calificacion_acta' => $request->calificacion_acta
+        ]); 
+        $msj = 'actualizado';
+        }else{
+            TrayectoriaC::create([
             'alumno_id' => $request->alumno,
             'materia_id' => $request->materia,
             'unidad' => $request->unidad,
             'actitud' => $request->actitud,
+            'responsabilidad' => $request->responsabilidad,
+            'colaborativo' => $request->colaborativo,
+            'relaciones_i' => $request->relaciones_i,
+            'creatividad' => $request->creatividad,
             'conocimiento' => $request->conocimiento,
+            'manejo_inf' => $request->manejo_inf,
+            'marco_tc' => $request->marco_tc,
             'desempeno' => $request->desempeno,
-            'calificacion' => $calif
+            'practicas' => $request->practicas,
+            'estudios_caso' => $request->estudios_caso,
+            'proyecto' => $request->proyecto,
+            'ejercicios' => $request->ejercicios,
+            'ensayo' => $request->ensayo,
+            'calificacion' => $request->calificacion,
+            'calificacion_acta' => $request->calificacion_acta
         ]);
-                
-                return redirect()->route('trayectoriac.index')->with('mensaje', 'El registro se ha actualizado exitosamente');
-            
+             $msj = 'creado';
+       }   
+        return redirect()->route('trayectoriac.index')->with('mensaje', 'El registro se ha '.$msj.' exitosamente');    
     }
     public function reporte($idm)
     {
@@ -264,7 +301,9 @@ class TrayectoriaCController extends Controller
     }
     public function delete($idtc)
     {
-        DB::delete("DELETE FROM trayectoria_cuatrimestral WHERE idtc=$idtc;"); 
+        $Q = DB::select("SELECT alumno_id FROM trayectoria_cuatrimestral WHERE idtc=$idtc");
+        $ida = $Q[0]->alumno_id; 
+        DB::delete("DELETE FROM trayectoria_cuatrimestral WHERE alumno_id=$ida;"); 
         return back()->with('mensaje', 'Registro eliminado exitosamente');
     }
 

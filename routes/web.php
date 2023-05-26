@@ -79,6 +79,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('trayectoriac/unidades', [TrayectoriaCController::class,'unidades'])->name('trayectoriac.unidades');
     Route::get('trayectoriac/reporte/{id}', [TrayectoriaCController::class,'reporte'])->name('trayectoriac.reporte');
     Route::post('trayectoriac/reporte_pdf', [TrayectoriaCController::class,'reporte_pdf'])->name('trayectoriac.reporte_pdf');
+    Route::get('trayectoriac/delete/{id}', [TrayectoriaCController::class,'delete'])->name('trayectoriac.delete');
+    Route::post('trayectoriac/atributos', [TrayectoriaCController::class,'atributos'])->name('trayectoriac.atributos');
     Route::resource('trayectoriac', TrayectoriaCController::class, ['names' => 'trayectoriac']);
     Route::get('tutorias/delete/{id}', [TutoriasController::class,'delete'])->name('tutorias.delete');
     Route::resource('tutorias', TutoriasController::class, ['names' => 'tutorias']);

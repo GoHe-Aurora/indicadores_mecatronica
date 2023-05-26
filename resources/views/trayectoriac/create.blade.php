@@ -77,18 +77,18 @@
                      <label for="actitud">Actitud: <b class="text-danger">*</b></label>
                      <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="responsabilidad" name="responsabilidad" value="{{ old('responsabilidad') }}" min="7" max="10"placeholder="Responsabilidad">
+                    <input type="number" class="form-control" id="responsabilidad" name="responsabilidad" value="{{ old('responsabilidad') }}" min="1" max="10"placeholder="Responsabilidad">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="colaborativo" name="colaborativo" value="{{ old('colaborativo') }}" min="7" max="10" placeholder="Colaborativo"> 
+                    <input type="number" class="form-control" id="colaborativo" name="colaborativo" value="{{ old('colaborativo') }}" min="1" max="10" placeholder="Colaborativo"> 
                 </div>
                  </div><br>
                  <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="relaciones_i" name="relaciones_i" value="{{ old('relaciones_i') }}" min="7" max="10" placeholder="Relaciones Interpersonales">
+                    <input type="number" class="form-control" id="relaciones_i" name="relaciones_i" value="{{ old('relaciones_i') }}" min="1" max="10" placeholder="Relaciones Interpersonales">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="creatividad" name="creatividad" value="{{ old('creatividad') }}" min="7" max="10" placeholder="Creatividad"> 
+                    <input type="number" class="form-control" id="creatividad" name="creatividad" value="{{ old('creatividad') }}" min="1" max="10" placeholder="Creatividad"> 
                 </div>
                  </div>
                 </div>
@@ -96,10 +96,10 @@
                      <label for="conocimiento">Conocimiento: <b class="text-danger">*</b></label>
                      <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="marco_tc" name="marco_tc" value="{{ old('marco_tc') }}" min="7" max="10" placeholder="Marco teórico y conceptual">
+                    <input type="number" class="form-control" id="marco_tc" name="marco_tc" value="{{ old('marco_tc') }}" min="1" max="10" placeholder="Marco teórico y conceptual">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="manejo_info" name="manejo_info" value="{{ old('manejo_info') }}" min="7" max="10" placeholder="Manejo de información"> 
+                    <input type="number" class="form-control" id="manejo_info" name="manejo_info" value="{{ old('manejo_info') }}" min="1" max="10" placeholder="Manejo de información"> 
                 </div>
                  </div>
 
@@ -111,24 +111,24 @@
                      <label for="desempeno">Desempeño: <b class="text-danger">*</b></label>
                     <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="practicas" name="practicas" value="{{ old('practicas') }}" min="7" max="10" placeholder="Prácticas">
+                    <input type="number" class="form-control" id="practicas" name="practicas" value="{{ old('practicas') }}" min="1" max="10" placeholder="Prácticas">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="estudios_caso" name="estudios_caso" value="{{ old('estudios_caso') }}" min="7" max="10" placeholder="Estudios de caso"> 
+                    <input type="number" class="form-control" id="estudios_caso" name="estudios_caso" value="{{ old('estudios_caso') }}" min="1" max="10" placeholder="Estudios de caso"> 
                 </div>
                  </div>
                  <br>
                  <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="proyecto" name="proyecto" value="{{ old('proyecto') }}" min="7" max="10" placeholder="Proyecto">
+                    <input type="number" class="form-control" id="proyecto" name="proyecto" value="{{ old('proyecto') }}" min="1" max="10" placeholder="Proyecto">
                      </div>
                      <div class="col-md-6">
-                    <input type="number" class="form-control" id="ejercicios" name="ejercicios" value="{{ old('ejercicios') }}" min="7" max="10" placeholder="Ejercicios"> 
+                    <input type="number" class="form-control" id="ejercicios" name="ejercicios" value="{{ old('ejercicios') }}" min="1" max="10" placeholder="Ejercicios"> 
                 </div>
                  </div><br>
                  <div class="row">
                      <div class="col-md-6">   
-                    <input type="number" class="form-control" id="ensayo" name="ensayo" value="{{ old('ensayo') }}" min="7" max="10" placeholder="Ensayo">
+                    <input type="number" class="form-control" id="ensayo" name="ensayo" value="{{ old('ensayo') }}" min="1" max="10" placeholder="Ensayo">
                      </div>
                      <div class="col-md-6">
                     
@@ -139,7 +139,7 @@
                     <div class="row">
                     <div class="col-md-6"> 
                     <label for="calificacion">Calificación: <b class="text-danger">*</b></label>  
-                    <input type="number" class="form-control" id="calificacion" name="calificacion" value="{{ old('calificacion') }}" placeholder="Sin redondear" required readonly>
+                    <input type="number" class="form-control" step="0.01" id="calificacion" name="calificacion" value="{{ old('calificacion') }}" placeholder="Sin redondear" required readonly>
                     </div>
                     <div class="col-md-6">
                     <label for="calificacion">Calificación Acta: <b class="text-danger">*</b></label>  
@@ -164,7 +164,7 @@
     $('#materia').change(function(){
                 $("#unidad").find('option').not(':first').remove();
                 if($(this).val()!=''){
-                    unidades($(this).val());
+                    unidades($(this).val(),1);
                 }   
             })
     $('#grupo').change(function(){
@@ -174,9 +174,6 @@
                 }   
             })
     $('#responsabilidad,#colaborativo,#relaciones_i,#creatividad,#marco_tc,#manejo_info,#practicas,#estudios_caso,#proyecto,#ejercicios,#ensayo').keyup(function(e){
-       // var code = (e.which) ? e.which : e.keyCode;
-        //if(code>=48 && code<=57){
-                /*if($('#actitud').val()!='' && $('#conocimiento').val()!='' && $('#desempeno').val()!=''){*/
                 a=0;
                 c=0;
                 d=0;
@@ -219,8 +216,6 @@
                 let calif = (porcentaje*10)/100;
                 $('#calificacion').val(calif.toFixed(2)); 
                 $('#calificacion_acta').val(Math.round(calif)); 
-                //} 
-            //}
             })
         function studentsByGroup(idg,opc){
             $.ajaxSetup({
@@ -240,7 +235,7 @@
                
              });
         }   
-        function unidades(materia){
+        function unidades(materia,opc){
             $.ajaxSetup({
              headers: {
                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -248,7 +243,7 @@
          });
             $.ajax({
                url:'/trayectoriac/unidades',
-               data:{'materia':materia},
+               data:{'materia':materia,'opc':opc},
                type:'post',
                dataType:'json',
                success:  function (response) {
