@@ -72,6 +72,7 @@ class AsesoriasController extends Controller
             ));
         }
         $json = json_encode($array);
+        return $json;
         return view("asesorias.index", compact("json","asesorias","grupos","fecha","gr","id"));
     }
 

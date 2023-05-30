@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\ValoracionAE;
+namespace App\Http\Controllers\EgelEcg;
 
 use File;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TiposUsuarios;
-use App\Models\ValoracionAE;
+use App\Models\EgelEcg;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
-class ValoracionAEController extends Controller
+class EgelEcgController extends Controller
 {
     /**
      * Vista para mostrar un listado de alumnos.
@@ -35,20 +35,20 @@ class ValoracionAEController extends Controller
             $condition2 = "WHERE g.idgr=$grupo_ing_id";
         }
         $array = array();
-        //$alumnos = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre gr_tsu,g2.nombre gr_ing FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON v.grupo_tsu=g.idgr LEFT JOIN grupos g2 ON v.grupo_ing=g2.idgr $condition $condition2;");
-        $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
-        $materias = DB::select("SELECT * FROM materias;");
+        $alumnos = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre gr_tsu,g2.nombre gr_ing FROM egel_ecg v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON v.grupo_tsu=g.idgr LEFT JOIN grupos g2 ON v.grupo_ing=g2.idgr $condition $condition2;");
+        $grupos_tsu = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id<7;");
+        $grupos_ing = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id>=7;");
         function btn($idv){
            
-                $botones = "<a href=\"#eliminar-vae\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-vae-$idv')\"><i class='fas fa-power-off'></i></a>"
-                         . "<a href= ". route('valoracion_ae.edit', $idv ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>";
+                $botones = "<a href=\"#eliminar-egel_ecg\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-egel_ecg-$idv')\"><i class='fas fa-power-off'></i></a>"
+                         . "<a href= ". route('egel_ecg.edit', $idv ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>";
                 
             return $botones;
         }
-        /*foreach ($alumnos as $alumno){
+        foreach ($alumnos as $alumno){
 
             array_push($array, array(
-                'idv'                 => $alumno->idv,
+                'ide'                 => $alumno->ide,
                 'nombre'              => $alumno->nombre,
                 'app'                 => $alumno->app,
                 'apm'                 => $alumno->apm,
@@ -56,30 +56,11 @@ class ValoracionAEController extends Controller
                 'grupo_ing'           => $alumno->gr_ing,
                 'promedio_tsu'        => $alumno->promedio_tsu,
                 'promedio_ing'        => $alumno->promedio_ing,
-                'operaciones'         => btn($alumno->idv)
+                'operaciones'         => btn($alumno->ide)
             ));
-        }*/
-        function ck(){
-            $ck = '<input type="checkbox" data-alumno="" data-id="" class="ck" name="academica" id="academica" value="1">
-<label for="academica">Lo Supera</label>
-<input form="myForm" type="checkbox" data-alumno="" data-id="" class="ck" name="nivelacion" id="nivelacion"  value="2"> 
-<label for="nivelacion">Lo Logra</label>
-<input form="myForm" type="checkbox" data-alumno="" data-id="" class="ck" name="nivelacion" id="nivelacion"  value="2"> 
-<label for="nivelacion">Lo Logra Parcialmente</label>
-<input form="myForm" type="checkbox" data-alumno="" data-id="" class="ck" name="nivelacion" id="nivelacion"  value="2"> 
-<label for="nivelacion">No Lo Logra</label>';
-            return $ck;
         }
-        array_push($array, array(
-                'idv'                 => 1,
-                'nombre'              => 'Aurora Guadalupe',
-                'app'                 => 'González',
-                'apm'                 => 'Hernández',
-                'puntuacion'        => ck(),
-                'operaciones'         => btn(1)
-            ));
         $json = json_encode($array);
-        return view("valoracion_ae.index", compact("json",/*"alumnos",*/"grupos","materias"));
+        return view("egel_ecg.index", compact("json","alumnos","grupos_tsu","grupos_ing","grupo_tsu_id","grupo_ing_id"));
     }
 
     /**
@@ -90,7 +71,7 @@ class ValoracionAEController extends Controller
         $grupos_tsu = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id<7;");
         $grupos_ing = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id>=7;");
 
-        return view( 'valoracion_ae.create', compact('grupos_tsu','grupos_ing'));
+        return view( 'egel_ecg.create', compact('grupos_tsu','grupos_ing'));
 
     }
 
@@ -114,17 +95,17 @@ class ValoracionAEController extends Controller
             'grupo_tsu' => isset($request->grupo_tsu) ? $request->grupo_tsu : null,
             'grupo_ing' => isset($request->grupo_ing) ? $request->grupo_ing : null
         ]);
-        return redirect()->route('valoracion_ae.index')->with('mensaje', 'El registro se ha guardado exitosamente');
+        return redirect()->route('egel_ecg.index')->with('mensaje', 'El registro se ha guardado exitosamente');
     }
 
     public function edit($idv)
     {
-        $alumno = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre gr_tsu,g2.nombre gr_ing FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON v.grupo_tsu=g.idgr LEFT JOIN grupos g2 ON v.grupo_ing=g2.idgr WHERE v.idv=$idv;");
+        $alumno = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre gr_tsu,g2.nombre gr_ing FROM egel_ecg v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON v.grupo_tsu=g.idgr LEFT JOIN grupos g2 ON v.grupo_ing=g2.idgr WHERE v.ide=$idv;");
 
         $grupos_tsu = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id<7;");
         $grupos_ing = DB::select("SELECT idgr,nombre FROM grupos WHERE cuatrimestre_id>=7;");
         
-        return view('valoracion_ae.edit', compact('alumno','grupos_tsu','grupos_ing'));
+        return view('egel_ecg.edit', compact('alumno','grupos_tsu','grupos_ing'));
     }
 
     /**
@@ -138,7 +119,7 @@ class ValoracionAEController extends Controller
             'promedio_ing'  => 'required|numeric|min:8',
             'grupo_tsu' => 'required', 
         ]);
-        ValoracionAE::where('idv',$idv)->update([
+        ValoracionAE::where('ide',$idv)->update([
             'alumno_id' => $request->alumno,
             'promedio_tsu' => $request->promedio_tsu,
             'promedio_ing' => $request->promedio_ing,
@@ -146,13 +127,13 @@ class ValoracionAEController extends Controller
             'grupo_ing' => isset($request->grupo_ing) ? $request->grupo_ing : null
         ]);
                 
-                return redirect()->route('valoracion_ae.index')->with('mensaje', 'El registro se ha actualizado exitosamente');
+                return redirect()->route('egel_ecg.index')->with('mensaje', 'El registro se ha actualizado exitosamente');
             
     }
 
     public function delete($idv)
     {
-        DB::delete("DELETE FROM valoracion_ae WHERE idv=$idv;"); 
+        DB::delete("DELETE FROM egel_ecg WHERE ide=$idv;"); 
         return back()->with('mensaje', 'Registro eliminado exitosamente');
     }
 

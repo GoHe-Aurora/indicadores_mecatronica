@@ -15,6 +15,7 @@ use App\Http\Controllers\Graficas\GraficasPorTipoAreaController;
 use App\Http\Controllers\Students\StudentsController;
 use App\Http\Controllers\Asesorias\AsesoriasController;
 use App\Http\Controllers\Tutorias\TutoriasController;
+use App\Http\Controllers\EgelEcg\EgelEcgController;
 use App\Http\Controllers\ValoracionAE\ValoracionAEController;
 use App\Http\Controllers\TrayectoriaC\TrayectoriaCController;
 use App\Http\Controllers\AsigGruposPTC\AsigGruposPTCController;
@@ -88,6 +89,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('valoracion_ae', ValoracionAEController::class, ['names' => 'valoracion_ae']);
     Route::get('asig_grupos_ptc/delete/{id}', [AsigGruposPTCController::class,'delete'])->name('asig_grupos_ptc.delete');
     Route::resource('asig_grupos_ptc', AsigGruposPTCController::class, ['names' => 'asig_grupos_ptc']);
+    Route::get('egel_ecg/delete/{id}', [EgelEcgController::class,'delete'])->name('egel_ecg.delete');
+    Route::resource('egel_ecg', EgelEcgController::class, ['names' => 'egel_ecg']);
     // Ruta para editar el perfil.
     Route::get('editar-perfil', [CuentasController::class, 'editar_perfil'])->name('editar-perfil');
     Route::post('editar-perfil', [CuentasController::class, 'editar_perfil_post'])->name('editar-perfil.post');

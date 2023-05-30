@@ -23,15 +23,15 @@
                     <a href="{{url('students/create')}}"><button class="btn btn-success"><i class="fas fa-user-alt"></i></button></a>
                 </div>
             </div-->
-            <form  action="{{ route('valoracion_ae.index') }}" method="GET">
+            <form  action="{{ route('egel_ecg.index') }}" method="GET">
                 @csrf
                 @method('GET')
             <div class="row">
             <div class="col-sm-4">
-                <label for="">Grupos: <strong style="color: red;"></strong></label>
+                <label for="">Grupo TSU: <strong style="color: red;"></strong></label>
             </div>
             <div class="col-sm-4">
-               
+               <label for="">Grupo ING: <strong style="color: red;"></strong></label>
             </div>
 
             <div class="col-sm-4">
@@ -40,10 +40,10 @@
         </div>
         <div class="row">
             <div class="col-sm-4">
-                <select class="form-control" name="grupo" id="grupo">
+                <select class="form-control" name="grupo_tsu" id="grupo_tsu">
                     <option value="">Selecciona una opción</option>
-                @foreach($grupos as $grupo)
-                            <option value="{{ $grupo->idgr }}" {{-- $grupo->idgr==$grupo_tsu_id ? 'selected' : '' --}}>{{ $grupo->nombre }}</option>
+                @foreach($grupos_tsu as $grupo)
+                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_tsu_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
                         @endforeach
                 </select>  
                 <br>
@@ -53,10 +53,15 @@
                  <!--button id="btn_exportar_excel" type="button" class="btn btn-success mt-1">
                 Exportar a EXCEL
             </button-->
-                <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('valoracion_ae.create')}}"><i class="fas fa-user-plus"></i></a>
+                <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('egel_ecg.create')}}"><i class="fas fa-user-plus"></i></a>
             </div>
             <div class="col-sm-4">
-                    
+                <select class="form-control" name="grupo_ing" id="grupo_ing">
+                    <option value="">Selecciona una opción</option>
+                @foreach($grupos_ing as $grupo)
+                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_ing_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
+                        @endforeach
+                </select>    
 
             </div>
             <div class="col-sm-4">
@@ -88,19 +93,22 @@
                 <zg-column index='nombre' header='Nombre'  type='text'></zg-column>
                 <zg-column index='app' header='Apellido Paterno'  type='text'></zg-column>
                 <zg-column index='apm' header='Apellido Materno'  type='text'></zg-column>
-                <zg-column index='puntuacion' header='Puntuación'  type='text'></zg-column>
+                <zg-column index='grupo_tsu' header='Grupo TSU'  type='text'></zg-column>
+                <zg-column index='promedio_tsu' header='Promedio TSU'  type='text'></zg-column>
+                <zg-column index='grupo_ing' header='Grupo ING'  type='text'></zg-column>
+                <zg-column index='promedio_ing' header='Promedio ING'  type='text'></zg-column>
                 <zg-column align="center" filter ="disabled" index='operaciones' header='Operaciones' type='text'></zg-column>
                 
         	<!--/zg-colgroup-->
     	</zing-grid>
 
 	</div>
-    {{--@foreach ($alumnos as $alumno)
-    <form id="eliminar-vae-{{ $alumno->idv }}" class="ocultar" action="{{ route('valoracion_ae.delete',$alumno->idv) }}" method="GET">
+    @foreach ($alumnos as $alumno)
+    <form id="eliminar-egel_ecg-{{ $alumno->ide }}" class="ocultar" action="{{ route('egel_ecg.delete',$alumno->ide) }}" method="GET">
         @csrf
         @method('DELETE')
     </form>
-     @endforeach--}}
+     @endforeach
      <script type="text/javascript">
         
      </script>

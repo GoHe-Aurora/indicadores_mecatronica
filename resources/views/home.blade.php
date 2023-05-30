@@ -145,7 +145,7 @@
                         style="background-color: #00b29a; cursor: pointer;"
                         id=""
                     >
-                        <div class="card-body valoracionae text-white">
+                        <div class="card-body egel_ecg text-white">
                             <div class="row text-center">
                                 <div class="col-lg-4 col-sm-12 mt-4">
                                     <i class="fa fa-check" style="font-size: 80px"></i>
@@ -191,12 +191,38 @@
                                 </div>
                             </div>
                         </div>
+                    </div>           
+
+ @endif
+ @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+                <div data-route="#" class="card col-lg-4 col-sm-12"
+                        style="background-color: #00b29a; cursor: pointer;"
+                        id=""
+                    >
+                        <div class="card-body valoracionae text-white">
+                            <div class="row text-center">
+                                <div class="col-lg-4 col-sm-12 mt-4">
+                                    <i class="fa fa-school" style="font-size: 80px"></i>
+                                </div>
+                                <div class="col-lg-8 col-sm-12">
+                                    <div class="mt-3">
+                                        <h5>
+                                          VALORACION AE
+                                        </h5>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h2>{{----}}</h2>
+                                    </div>
+                                    <h2></h2>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
 
  @endif
-
+             </div>
              </div>  
 
             </div>
@@ -216,17 +242,23 @@
 
     <script>
         const user_id = '{{ $user }}';
+        $('.alumnos').click(function(){
+            location.href = "{{route('students.index')}}";
+        })
         $('.tutorias').click(function(){
             location.href = "{{route('tutorias.index')}}";
         })
         $('.asesorias').click(function(){
             location.href = "{{route('asesorias.index')}}";
         })
-        $('.valoracionae').click(function(){
-            location.href = "{{route('valoracion_ae.index')}}";
+         $('.egel_ecg').click(function(){
+            location.href = "{{route('egel_ecg.index')}}";
         })
         $('.trayectoriac').click(function(){
             location.href = "{{route('trayectoriac.index')}}";
+        })
+        $('.valoracionae').click(function(){
+            location.href = "{{route('valoracion_ae.index')}}";
         })
     </script>
     <script  type="module" src="/js/panel/panel.js"></script>

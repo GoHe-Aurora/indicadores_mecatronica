@@ -218,7 +218,7 @@
             </a>
             <ul class="nav nav-treeview">
             <li class="nav-item">
-                      <a href="{{ url('/valoracion_ae') }}" class="nav-link">
+                      <a href="{{ url('/egel_ecg') }}" class="nav-link">
                       <i class="fas fa-list"></i>
                       <p>Lista</p>
                       </a>
@@ -236,6 +236,23 @@
             <ul class="nav nav-treeview">
             <li class="nav-item">
                       <a href="{{ url('/trayectoriac') }}" class="nav-link">
+                      <i class="fas fa-list"></i>
+                      <p>Lista</p>
+                      </a>
+                    </li>
+            </ul>
+          </li>
+          @endif
+          @if (Auth()->user()->idtu_tipos_usuarios == 1 || Auth()->user()->idtu_tipos_usuarios == 2)
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+             <i class="fas fa-check"></i>
+              <p>Valoración AE</p>
+              <i class="fas fa-angle-left right"></i>
+            </a>
+            <ul class="nav nav-treeview">
+            <li class="nav-item">
+                      <a href="{{ url('/valoracion_ae') }}" class="nav-link">
                       <i class="fas fa-list"></i>
                       <p>Lista</p>
                       </a>
