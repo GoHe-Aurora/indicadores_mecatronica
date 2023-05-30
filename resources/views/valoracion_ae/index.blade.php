@@ -27,19 +27,18 @@
                 @csrf
                 @method('GET')
             <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <label for="">Grupos: <strong style="color: red;"></strong></label>
             </div>
-            <div class="col-sm-4">
-               
+            <div class="col-sm-3">
+               <label for="">Materias: <strong style="color: red;"></strong></label>
             </div>
-
-            <div class="col-sm-4">
-                
+            <div class="col-sm-3">
+               <label for="">Atributos: <strong style="color: red;"></strong></label>  
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <select class="form-control" name="grupo" id="grupo">
                     <option value="">Selecciona una opción</option>
                 @foreach($grupos as $grupo)
@@ -55,12 +54,19 @@
             </button-->
                 <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('valoracion_ae.create')}}"><i class="fas fa-user-plus"></i></a>
             </div>
-            <div class="col-sm-4">
-                    
+            <div class="col-sm-3">
+                <select class="form-control" name="materia" id="materia">
+                    <option value="">Selecciona una opción</option>
+                @foreach($materias as $materia)
+                            <option value="{{ $materia->idm }}" {{-- $grupo->idgr==$grupo_tsu_id ? 'selected' : '' --}}>{{ $materia->descripcion }} {{ $materia->nombre }}</option>
+                        @endforeach
+                </select>     
 
             </div>
-            <div class="col-sm-4">
-               
+            <div class="col-sm-3">
+             <select class="form-control" name="atributo" id="atributo">
+                 <option value="">Selecciona una opción</option>
+             </select>  
          </div>
         </form>
         </div>
