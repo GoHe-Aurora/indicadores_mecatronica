@@ -42,23 +42,23 @@
                 <select class="form-control" name="grupo" id="grupo">
                     <option value="">Selecciona una opción</option>
                 @foreach($grupos as $grupo)
-                            <option value="{{ $grupo->idgr }}" {{-- $grupo->idgr==$grupo_tsu_id ? 'selected' : '' --}}>{{ $grupo->nombre }}</option>
+                            <option value="{{ $grupo->idgr }}" {{ $grupo->idgr==$grupo_id ? 'selected' : '' }}>{{ $grupo->nombre }}</option>
                         @endforeach
                 </select>  
                 <br>
                 <button type="submit" class="btn btn-primary mt-1" id="button">Enviar</button>
-                <a type="button" class="btn btn-primary mt-1" href="{{ url('/valoracion_ae')}}" >Limpiar
+                <a type="button" class="btn btn-primary mt-1" href="{{ url('/valoracion_ae')}}" >Limpiar</a>
              <!--button type="button" class="btn btn-primary mt-1" id="limpiar">Limpiar</button-->
                  <!--button id="btn_exportar_excel" type="button" class="btn btn-success mt-1">
                 Exportar a EXCEL
             </button-->
-                <a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('valoracion_ae.create')}}"><i class="fas fa-user-plus"></i></a>
+                <!--a style="margin-left: 5px;" type="button" class="btn btn-success mt-1" href="{{route('valoracion_ae.create')}}"><i class="fas fa-user-plus"></i></a-->
             </div>
             <div class="col-sm-3">
                 <select class="form-control" name="materia" id="materia">
                     <option value="">Selecciona una opción</option>
                 @foreach($materias as $materia)
-                            <option value="{{ $materia->idm }}" {{-- $grupo->idgr==$grupo_tsu_id ? 'selected' : '' --}}>{{ $materia->descripcion }} {{ $materia->nombre }}</option>
+                            <option value="{{ $materia->idm }}" {{ $materia->idm==$materia_id ? 'selected' : '' }}>{{ $materia->descripcion }} {{ $materia->nombre }}</option>
                         @endforeach
                 </select>     
 
@@ -94,8 +94,11 @@
                 <zg-column index='nombre' header='Nombre'  type='text'></zg-column>
                 <zg-column index='app' header='Apellido Paterno'  type='text'></zg-column>
                 <zg-column index='apm' header='Apellido Materno'  type='text'></zg-column>
-                <zg-column index='puntuacion' header='Puntuación'  type='text'></zg-column>
-                <zg-column align="center" filter ="disabled" index='operaciones' header='Operaciones' type='text'></zg-column>
+                <zg-column index='lo_supera' header='Lo Supera'  type='text'></zg-column>
+                <zg-column index='lo_logra' header='Lo Logra'  type='text'></zg-column>
+                <zg-column index='lo_logra_parcialmente' header='Lo Logra Parcialmente'  type='text'></zg-column>
+                <zg-column index='no_lo_logra' header='No Lo Logra'  type='text'></zg-column>
+                <!--zg-column align="center" filter ="disabled" index='operaciones' header='Operaciones' type='text'></zg-column-->
                 
         	<!--/zg-colgroup-->
     	</zing-grid>
@@ -108,7 +111,75 @@
     </form>
      @endforeach--}}
      <script type="text/javascript">
-        
+         $( document ).ready(function() {
+       $('.ck').on('change',function() {
+        if($(this).attr('value')==1){
+            $(".ck[value='1']").prop('checked', true);
+            $(".ck[value='2']").prop('checked', false);
+            $(".ck[value='3']").prop('checked', false);
+            $(".ck[value='4']").prop('checked', false); 
+        }else if($(this).attr('value')==2){
+            $(".ck[value='2']").prop('checked', true);
+            $(".ck[value='1']").prop('checked', false);
+            $(".ck[value='3']").prop('checked', false);
+            $(".ck[value='4']").prop('checked', false); 
+        }else if($(this).attr('value')==3){
+            $(".ck[value='3']").prop('checked', true);
+            $(".ck[value='1']").prop('checked', false);
+            $(".ck[value='2']").prop('checked', false);
+            $(".ck[value='4']").prop('checked', false); 
+        }else if($(this).attr('value')==4){
+            $(".ck[value='4']").prop('checked', true);
+            $(".ck[value='1']").prop('checked', false);
+            $(".ck[value='2']").prop('checked', false);
+            $(".ck[value='3']").prop('checked', false); 
+        }
+           agrega_atributo($('#atributo').val(),$(this).data('alumno'),$(this).val());
+        })
+        if($('#materia').val()!=''){
+            atributos($('#materia').val());
+        }
+        $('#materia').change(function(){
+            atributos($(this).val());
+        })
+        function agrega_atributo(atributo,alumno,val){
+            $.ajaxSetup({
+             headers: {
+                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+             }
+         });
+            $.ajax({
+               url:'/valoracion_ae/agrega_atributo/',
+               data:{'atributo':atributo,'alumno':alumno,'val':val},
+               type:'post',
+               dataType:'json',
+               success:  function (response) {
+                  alert(response);
+               },
+               
+             });
+        } 
+    function atributos(materia){
+            $.ajaxSetup({
+             headers: {
+                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+             }
+         });
+            $.ajax({
+               url:'/valoracion_ae/atributos/'+materia,
+               //data:{'materia':materia},
+               type:'get',
+               dataType:'json',
+               success:  function (response) {
+                $('#atributo').empty();
+                    $.each(response,function(i,val){
+            $('#atributo').append('<option value="'+val.idae+'">'+val.idae+' '+val.descripcion+'</option>');
+                    })  
+               },
+               
+             });
+        }  
+        }) 
      </script>
 
 @endif

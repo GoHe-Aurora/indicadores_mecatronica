@@ -86,6 +86,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('tutorias/delete/{id}', [TutoriasController::class,'delete'])->name('tutorias.delete');
     Route::resource('tutorias', TutoriasController::class, ['names' => 'tutorias']);
     Route::get('valoracion_ae/delete/{id}', [ValoracionAEController::class,'delete'])->name('valoracion_ae.delete');
+    Route::get('valoracion_ae/atributos/{id}', [ValoracionAEController::class,'atributos'])->name('valoracion_ae.atributos');
+    Route::post('valoracion_ae/agrega_atributo', [ValoracionAEController::class,'agrega_atributo'])->name('valoracion_ae.agrega_atributo');
     Route::resource('valoracion_ae', ValoracionAEController::class, ['names' => 'valoracion_ae']);
     Route::get('asig_grupos_ptc/delete/{id}', [AsigGruposPTCController::class,'delete'])->name('asig_grupos_ptc.delete');
     Route::resource('asig_grupos_ptc', AsigGruposPTCController::class, ['names' => 'asig_grupos_ptc']);

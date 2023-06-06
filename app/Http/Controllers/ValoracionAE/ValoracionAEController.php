@@ -22,64 +22,77 @@ class ValoracionAEController extends Controller
      */
     public function index(Request $request)
     {
-        $grupo_tsu_id = '';
-        $grupo_ing_id = '';
-        $condition = '';
+        $condition1 = '';
         $condition2 = '';
-        if($request->grupo_tsu){
-            $grupo_tsu_id = $request->grupo_tsu;
-            $condition = "WHERE g.idgr=$grupo_tsu_id";
+        $grupo_id = '';
+        $materia_id = '';
+        $atributo_id = -1;
+        if($request->grupo){
+            $grupo_id = $request->grupo;
+            $condition1 = "AND a.grupo_id=$grupo_id";
         }
-        if($request->grupo_ing){
-            $grupo_ing_id = $request->grupo_ing;
-            $condition2 = "WHERE g.idgr=$grupo_ing_id";
+        if($request->materia){
+            $materia_id = $request->materia;
+            $condition2 = "AND ma.idm=$materia_id";
+        }
+        if($request->atributo){
+            $atributo_id = $request->atributo;
         }
         $array = array();
-        //$alumnos = DB::select("SELECT v.*,a.ida,a.nombre,a.app,a.apm,a.matricula,g.nombre gr_tsu,g2.nombre gr_ing FROM valoracion_ae v INNER JOIN alumnos a ON v.alumno_id=a.ida INNER JOIN grupos g ON v.grupo_tsu=g.idgr LEFT JOIN grupos g2 ON v.grupo_ing=g2.idgr $condition $condition2;");
+        $alumnos = DB::select("SELECT a.ida idalu,a.nombre,a.app,a.apm,ma.lo_supera,ma.lo_logra,ma.lo_logra_parcialmente,ma.no_lo_logra,at.ida,at.lo_supera supera,at.lo_logra logra,at.lo_logra_parcialmente logra_parc,at.no_lo_logra no_logra FROM alumnos a LEFT JOIN alumnos_atributos_egreso_pe AT ON at.idalu=a.ida LEFT JOIN materias_atributos ma ON ma.ida=$atributo_id WHERE 1=1 $condition1 $condition2 GROUP BY a.ida;");
         $grupos = DB::select("SELECT idgr,nombre FROM grupos;");
         $materias = DB::select("SELECT * FROM materias;");
         function btn($idv){
            
                 $botones = "<a href=\"#eliminar-vae\" class=\"btn btn-danger mt-1\" onclick=\"formSubmit('eliminar-vae-$idv')\"><i class='fas fa-power-off'></i></a>"
-                         . "<a href= ". route('valoracion_ae.edit', $idv ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>";
+                         /*. "<a href= ". route('valoracion_ae.edit', $idv ) ." class=\"btn btn-primary mt-1\"> <i class='fa fa-user-alt'></i> </a>"*/;
                 
             return $botones;
         }
-        /*foreach ($alumnos as $alumno){
-
-            array_push($array, array(
-                'idv'                 => $alumno->idv,
-                'nombre'              => $alumno->nombre,
-                'app'                 => $alumno->app,
-                'apm'                 => $alumno->apm,
-                'grupo_tsu'           => $alumno->gr_tsu,
-                'grupo_ing'           => $alumno->gr_ing,
-                'promedio_tsu'        => $alumno->promedio_tsu,
-                'promedio_ing'        => $alumno->promedio_ing,
-                'operaciones'         => btn($alumno->idv)
-            ));
-        }*/
-        function ck(){
-            $ck = '<input type="checkbox" data-alumno="" data-id="" class="ck" name="academica" id="academica" value="1">
-<label for="academica">Lo Supera</label>
-<input form="myForm" type="checkbox" data-alumno="" data-id="" class="ck" name="nivelacion" id="nivelacion"  value="2"> 
-<label for="nivelacion">Lo Logra</label>
-<input form="myForm" type="checkbox" data-alumno="" data-id="" class="ck" name="nivelacion" id="nivelacion"  value="2"> 
-<label for="nivelacion">Lo Logra Parcialmente</label>
-<input form="myForm" type="checkbox" data-alumno="" data-id="" class="ck" name="nivelacion" id="nivelacion"  value="2"> 
+         function ck($txt,$opc,$alumno,$val){
+            $checked = $val!=null ? 'checked' : '';
+            if($opc==1){
+              $ck = '<input type="checkbox" data-alumno="'.$alumno.'" '.$checked.' data-id="" class="ck" name="academica" id="lo_supera" value="1">
+<label for="academica">Lo Supera</label>';   
+            }else if($opc==2){
+              $ck = '<input form="myForm" type="checkbox" '.$checked.' data-alumno="'.$alumno.'" data-id="" class="ck" name="nivelacion" id="lo_logra"  value="2"> 
+<label for="nivelacion">Lo Logra</label>';  
+            }else if($opc==3){
+              $ck = '<input form="myForm" type="checkbox" '.$checked.' data-alumno="'.$alumno.'" data-id="" class="ck" name="nivelacion" id="lo_logra_parcialmente"  value="3"> 
+<label for="nivelacion">Lo Logra Parcialmente</label>';
+            }else if($opc==4){
+              $ck = '<input form="myForm" type="checkbox" '.$checked.' data-alumno="'.$alumno.'" data-id="" class="ck" name="nivelacion" id="no_lo_logra"  value="4"> 
 <label for="nivelacion">No Lo Logra</label>';
-            return $ck;
+            }
+            if($txt!=''){
+               return $txt.$ck; 
+            }else{
+               return $txt;  
+            }
+            
         }
-        array_push($array, array(
+        foreach ($alumnos as $alumno){
+            array_push($array, array(
+                'nombre'                   => $alumno->nombre,
+                'app'                      => $alumno->app,
+                'apm'                      => $alumno->apm,
+                'lo_supera'                => ck($alumno->lo_supera,1,$alumno->idalu,$alumno->supera),
+                'lo_logra'                 => ck($alumno->lo_logra,2,$alumno->idalu,$alumno->logra),
+                'lo_logra_parcialmente'    => ck($alumno->lo_logra_parcialmente,3,$alumno->idalu,$alumno->logra_parc),
+                'no_lo_logra'              => ck($alumno->no_lo_logra,4,$alumno->idalu,$alumno->no_logra),
+                //'operaciones'              => btn($alumno->idat)
+            ));
+        }
+        /*array_push($array, array(
                 'idv'                 => 1,
                 'nombre'              => 'Aurora Guadalupe',
                 'app'                 => 'González',
                 'apm'                 => 'Hernández',
                 'puntuacion'        => ck(),
                 'operaciones'         => btn(1)
-            ));
+            ));*/
         $json = json_encode($array);
-        return view("valoracion_ae.index", compact("json",/*"alumnos",*/"grupos","materias"));
+        return view("valoracion_ae.index", compact("json","alumnos","grupos","materias","grupo_id","materia_id","atributo_id"));
     }
 
     /**
@@ -93,7 +106,38 @@ class ValoracionAEController extends Controller
         return view( 'valoracion_ae.create', compact('grupos_tsu','grupos_ing'));
 
     }
-
+    public function atributos($materia)
+    {
+    $atributos = DB::select("SELECT at.idae,at.descripcion FROM atributos_egreso_pe AT INNER JOIN materias_atributos ma ON ma.ida=at.idae WHERE ma.idm=$materia;");
+    return json_encode($atributos);
+    }  
+    public function agrega_atributo(Request $request)
+    {
+    $R = DB::select("SELECT idalu FROM alumnos_atributos_egreso_pe WHERE idalu=$request->alumno;");
+    if(isset($R[0]->idalu)){
+        if($request->val==1){
+           DB::select("UPDATE alumnos_atributos_egreso_pe SET lo_supera=1,lo_logra=NULL,lo_logra_parcialmente=NULL,no_lo_logra=NULL WHERE idalu=$request->alumno");  
+        }else if($request->val==2){
+           DB::select("UPDATE alumnos_atributos_egreso_pe SET lo_supera=NULL,lo_logra=1,lo_logra_parcialmente=NULL,no_lo_logra=NULL WHERE idalu=$request->alumno");  
+        }else if($request->val==3){
+           DB::select("UPDATE alumnos_atributos_egreso_pe SET lo_supera=NULL,lo_logra=NULL,lo_logra_parcialmente=1,no_lo_logra=NULL WHERE idalu=$request->alumno");  
+        }else if($request->val==4){
+           DB::select("UPDATE alumnos_atributos_egreso_pe SET lo_supera=NULL,lo_logra=1,lo_logra_parcialmente=NULL,no_lo_logra=1 WHERE idalu=$request->alumno");  
+        }
+         
+    }else{
+        if($request->val==1){
+           DB::select("INSERT INTO alumnos_atributos_egreso_pe (ida,idalu,lo_supera) VALUES($request->atributo,$request->alumno,1)");  
+        }else if($request->val==2){
+           DB::select("INSERT INTO alumnos_atributos_egreso_pe (ida,idalu,lo_logra) VALUES($request->atributo,$request->alumno,1)");  
+        }else if($request->val==3){
+           DB::select("INSERT INTO alumnos_atributos_egreso_pe (ida,idalu,lo_logra_parcialmente) VALUES($request->atributo,$request->alumno,1)");  
+        }else if($request->val==4){
+           DB::select("INSERT INTO alumnos_atributos_egreso_pe (ida,idalu,no_lo_logra) VALUES($request->atributo,$request->alumno,1)");  
+        }
+    }
+    return json_encode("Registro agregado correctamente.");
+    }  
     /**
      * Guardar un usuario.
      */
